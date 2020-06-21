@@ -75,8 +75,6 @@ class Cards
 
   private Card nextCard(Reader r)
   {
-    System.err.println("About to load card# " + data.size());
-
     Card card = new Card(fields);
     card.loadFields(r);
     return card;
@@ -141,29 +139,6 @@ class Card
   }
 
   /**
-   * Returns true if there is a next field.
-   * 
-   * Between calls, the reader should be positioned just after any delimiter.
-   * There is no next field when we've either hit EOF, or,
-   * as part of nextField, consumed the card ending \r\n.
-   */
-  private boolean hasNextField(Reader r)
-  {
-    if( ateEOL ) return false;
-
-    boolean has;
-    if(!r.markSupported()) throw new Error("Reader Mark not supported!");
-    try {
-      r.mark(10);
-      has = (r.read() != -1);
-      r.reset();
-    } catch (java.io.IOException x) {
-      throw new Error("Unexpected IOException");
-    }
-    return has;
-  }
-
-  /**
    * Returns the next field.
    *
    * Between calls, the Reader points at the start of a field,
@@ -176,33 +151,25 @@ class Card
       int ch = r.read();
       boolean quotedText = ch=='"';
       if(quotedText) {
-        ch = r.read(); // get into the meat of the field
-        //
-        // just gather up everything until the closing quote
-        //
-        while(ch != '"') {
-          //
-          // Make any escaped characters unescaped.
-          // Especially important for \".
-          //
-          if( ch=='\\' ) ch=r.read();
+        ch = r.read(); // get rid of the leading quote
+        while( ch!='"' || (ch=r.read())=='"' ) {
+          // ch is either a regular character, or the second of two quotes.
           accum.append((char)ch);
           ch = r.read();
         }
-        ch = r.read(); // soak up \t or \r
-        if( ch=='\r' ) {
-           r.read(); // soak up \n
-           ateEOL = true;
+        // a first quote was read, then a non-quote.
+        assert ch=='\t' || ch=='\r' || ch==-1 : "Error in flashcard file";
+        if( ch == '\r' ) {
+          ch = r.read();
+          assert ch=='\n' : "Return not followed by linefeed in flashcard file";
         }
       } else {
         while( ch != '\t' && ch != '\r' && ch != -1 ) {
-          if( ch=='\\' ) ch=r.read(); // What is the format of the file?
           accum.append((char)ch);
           ch = r.read();
         }
         if( ch=='\r' ) {
           r.read(); // soak up \n
-          ateEOL = true;
         }
       }
       return accum.toString();
@@ -213,8 +180,9 @@ class Card
 
   private static String canonicalField(String s)
   {
-    if(s.contains("\n"))
-      return "\"" + s.replace("\"","\\\"") + "\"";
+    if(s.contains("\n") || s.contains("\""))
+      // Quote the begining and end, and replace solo quotes with pairs.
+      return "\"" + s.replace("\"","\"\"") + "\"";
     else
       return s;
   }
