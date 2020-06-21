@@ -7,11 +7,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * A card can have different fields or numbers of fields
- * from in the flashcard data file, but that will need
- * to get straightened out before storing them back into
- * the flashcard data file.
- *
  * Unlike Header, FieldNames, and Cards,
  * this class (Card) is not loaded by the constructor.
  */
@@ -30,38 +25,9 @@ class Card
     fieldNames = fields;
   }
   void loadFields(Reader r) {
-//    initIterator();
-//    while(hasNextField(r)) {
-//      data.add(nextField(r));
-//    }
     for(int i=0; i<fieldNames.length(); i++)
       data.add(nextField(r));
-/*   
-    if(data.size() != fieldNames.length()) {
-      System.err.println(
-        "Field 1: " + data.get(0));
-      System.err.println(
-        "Card has wrong number of fields: " + 
-        data.size() + 
-        " vs " + 
-        fieldNames.length()
-      );
-    }
-*/
   }  
-
-  /**
-   * Indicates that nextField just ate the card ending \r\n.
-   */
-  boolean ateEOL;
-
-  /**
-   * Resets ateEOL before iterating through the fields.
-   */
-  private void initIterator()
-  {
-    ateEOL = false;
-  }
 
   /**
    * Returns the next field.
@@ -115,7 +81,7 @@ class Card
   public String toString()
   {
     var joiner = java.util.stream.Collectors.joining("\t");
-    var result = data.stream().map(s->canonicalField(s)).collect(joiner);
+    var result = data.stream().map(Card::canonicalField).collect(joiner);
     return result;
   }
 }
