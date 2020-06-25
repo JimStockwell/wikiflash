@@ -1,19 +1,42 @@
 package fdshow;
 
-interface CardsHolder {
-  int[] getUnmarkedCardsIndexes();
-  void mark(int[] indexes);
-  void addCardsFrom(CardsHolder source, int[] indexes);
+/*
+ * CardsHolder's fdshow direct dependencies
+ *   CardMarker
+ *   Card
+ */
+
+import java.util.Collection;
+
+class CardsHolder {
+  
+  protected CardsHolder();
 
   /**
-   * Saves the cards to the provided storage.
+   * The actual cards themselves.
    */
-  void saveTo( java.io.OutputStream out );
+  protected List<Card> data;
 
   /**
-   * Loads the cards from the provided storage.
-   *
-   * Uses BufferedReader to support mark and reset.
+   * Adds new Cards from an other CardsHolder.
+   * The new Cards are shared between the two.
+   * Marks the Cards with IDs.
    */
-  void loadFrom( java.io.BufferedReader r );
+  public void addNewCardsFrom(CardsHolder other) {
+    if (data == null)
+      throw new IllegalStateException("'data' not set yet.");
+    var cardsToMarkAndCopy =
+      other.data.stream().
+      filter(CardMarker::isUnmarked).
+      collect(Collectors.toList());
+    var maxCardID =
+      other.data.stream().
+      filter(CardMarker::isMarked().
+      mapToInt(card -> CardMarker::getId).
+      max();
+    CardMarker.setNextId(
+      maxCardID.isPresent() ? maxCardID.get() : Integer.MIN_VALUE);
+    cardsToMarkAndCopy.forEach(card -> CardMarker.mark(card));
+    this.data.addAll(cardsToMarkAndCopy);
+  }
 }

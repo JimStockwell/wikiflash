@@ -1,6 +1,7 @@
-AllRewrite.txt
-All.txt.bak
 All.txt
+All.txt.bak
+Wiki.txt
+Wiki.txt.bak
 *.swp
 out
 
