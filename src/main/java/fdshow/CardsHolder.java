@@ -1,5 +1,8 @@
 package fdshow;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 /*
  * CardsHolder's fdshow direct dependencies
  *   CardMarker
@@ -10,7 +13,7 @@ import java.util.Collection;
 
 class CardsHolder {
   
-  protected CardsHolder();
+  protected CardsHolder(){};
 
   /**
    * The actual cards themselves.
@@ -31,11 +34,11 @@ class CardsHolder {
       collect(Collectors.toList());
     var maxCardID =
       other.data.stream().
-      filter(CardMarker::isMarked().
-      mapToInt(card -> CardMarker::getId).
+      filter(card -> CardMarker.isMarked(card)).
+      mapToInt(CardMarker::getId).
       max();
     CardMarker.setNextId(
-      maxCardID.isPresent() ? maxCardID.get() : Integer.MIN_VALUE);
+      maxCardID.isPresent() ? maxCardID.getAsInt() : Integer.MIN_VALUE);
     cardsToMarkAndCopy.forEach(card -> CardMarker.mark(card));
     this.data.addAll(cardsToMarkAndCopy);
   }

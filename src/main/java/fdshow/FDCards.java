@@ -1,5 +1,9 @@
 package fdshow;
 
+/* fdshow classes that FDCards knows about
+ * CardsHolder
+ * FDCard
+
 import java.io.Reader;
 import java.util.LinkedList;
 import java.util.List;
@@ -39,11 +43,11 @@ class FDCards extends CardsHolder
    * @param fn  The field list that describes the fields about to be read.
    *            Used for infering the number of fields to read.
    */
-  loadFrom(Reader r, FieldNames fn)
+  void loadFrom(java.io.Reader r, FieldNames fn)
   {
     fields = fn;
     numberOfFields = fn.length();
-    data = new LinkedList<FDCard>();
+    data = new java.util.LinkedList<Card>();
     while(hasNextCard(r)) {
       data.add(nextCard(r));
     }
@@ -52,13 +56,13 @@ class FDCards extends CardsHolder
   public String toString()
   {
     if (data==null)
-      throw IllegalStateException("FDCards.loadFrom not called first.);
+      throw new IllegalStateException("FDCards.loadFrom not called first.");
     var joiner = java.util.stream.Collectors.joining("\r\n");
     var result = data.stream().map(c -> c.toString()).collect(joiner);
     return result;
   }
   
-  private static boolean hasNextCard(Reader r){
+  private static boolean hasNextCard(java.io.Reader r){
     boolean has;
     try {
       r.mark(10);
@@ -70,9 +74,9 @@ class FDCards extends CardsHolder
     return has;
   }
 
-  private FDCard nextCard(Reader r) {
-    FDCard card = new FDCard(fields);
-    card.loadFields(r);
-    return card;
+  private Card nextCard(java.io.Reader r) {
+    FDCard fdCard = new FDCard(fields);
+    fdCard.loadFields(r);
+    return fdCard;
   }
 }

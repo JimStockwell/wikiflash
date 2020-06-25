@@ -32,6 +32,7 @@ public class App
         FDFileData fcData = new FDFileData();
         fcData.loadFrom(new BufferedReader( new FileReader( fcFile ) ) );
 
+/*
         //
         // Load the wiki data
         //
@@ -44,7 +45,7 @@ public class App
         // (And mark them in the flashcard file and the wiki file)
         //
         wData.addNewCardsFrom(fcData);
-        
+*/       
         //
         // Save the flashcard data
         //
@@ -52,7 +53,7 @@ public class App
         if( !renamed )
           throw new Error("Could not rename flashcard file to backup");
         fcData.saveTo(new FileOutputStream( args[0] ) );
-
+/*
         //
         // Save the wiki data
         //
@@ -60,5 +61,6 @@ public class App
         if( !renamed )
           throw new Error("Could not rename wiki file to backup");
         wData.saveTo(new FileWriter( wFile ));
+*/
     }
 }

@@ -36,11 +36,11 @@ public class FDFileData extends FDCards // which extends CardsHolder
   }
 
   public String toString() {
-    return new sb().
+    return new StringBuilder().
       append(header.toString()).
       append(fieldNames.toString()).
       append(super.toString()).
-      toString()
+      toString();
   }
 }
 

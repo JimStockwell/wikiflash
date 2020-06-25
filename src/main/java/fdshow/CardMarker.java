@@ -7,6 +7,23 @@ package fdshow;
 
 import java.util.regex.Pattern;
 
+class ID {
+  private int value;
+  private boolean setYet = false;
+  String getThenInc() {
+    if (!setYet)
+      throw new IllegalStateException("Tried to read before setting.");
+    return String.valueOf(value++);
+  }
+  void set(int value) {
+    this.value = value;
+    this.setYet = true;
+  }
+  boolean isSet() {
+    return this.setYet;
+  }
+}
+
 /**
  * Markes a card with an ID number.
  *
@@ -22,36 +39,20 @@ import java.util.regex.Pattern;
 
 class CardMarker {
   
-  private class ID {
-    private int value;
-    private boolean setYet = false;
-    String getThenInc() {
-      if (!setYet)
-        throw New IllegalStateException("Tried to read before setting.");
-      return String.valueOf(value++);
-    }
-    void set(int value) {
-      this.value = value;
-      this.setYet = true;
-    }
-    void isSet() {
-      return this.setYet;
-    }
-  }
 
   static private ID nextId = new ID();
   
   static void setNextId( int nextId ) {
-    this.nextId.set( nextId );
+    CardMarker.nextId.set( nextId );
   }
 
   static boolean isMarked( Card c ) {
     String firstSide = c.getField0();
-    return firstSide.matches("^<DIV id=\"-?[0-9]+\">[A-Z]*</DIV>")
+    return firstSide.matches("^<DIV id=\"-?[0-9]+\">[A-Z]*</DIV>");
   }
 
   static boolean isUnmarked( Card c ) {
-    return !Marked(c);
+    return !isMarked(c);
   }
 
   /**
@@ -59,23 +60,23 @@ class CardMarker {
    */
   static void mark(Card c) {
     if (isMarked(c))
-      throw IllegalArgumentException("Card is already marked.");
+      throw new IllegalArgumentException("Card is already marked.");
     if (!nextId.isSet())
-      throw IllegalStateException("Next ID has not been set yet.");
+      throw new IllegalStateException("Next ID has not been set yet.");
     String firstSide = c.getField0();
     String revisedFirstSide = new StringBuilder().
       append("<DIV id=\"").
       append(nextId.getThenInc()).
       append("\"></DIV>").
       append(firstSide).
-      toString());
+      toString();
     c.setField0(revisedFirstSide);
   }
 
-  static String getId( Card c ) {
+  static int getId( Card c ) {
     if (isUnmarked(c)) 
-      throw IllegalArgumentException("Card has no ID.");
-    idString = c.getField0().split("\"",2)[1];
+      throw new IllegalArgumentException("Card has no ID.");
+    String idString = c.getField0().split("\"",2)[1];
     return Integer.parseInt(idString);
   }
 }

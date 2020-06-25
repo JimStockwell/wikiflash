@@ -29,7 +29,7 @@ class FDCard implements Card
    */
   List<String> data;
 
-  Card(FieldNames fields) {
+  FDCard(FieldNames fields) {
     data = new LinkedList<String>();
     fieldNames = fields;
   }
@@ -40,23 +40,20 @@ class FDCard implements Card
   }  
 
   private boolean cardIsFullyLoaded() {
-    return data.length()==fieldNames.length();
+    return data.size()==fieldNames.length();
   }
 
-  String getField0() {
+  public String getField0() {
     if (!cardIsFullyLoaded())
-      throw new IllegalStateException("The card is not fully loadeded yet.")
-    return data.peek;
+      throw new IllegalStateException("The card is not fully loadeded yet.");
+    return data.get(0);
   }
 
-  void setField0(String f0) {
+  public void setField0(String content) {
     if (!cardIsFullyLoaded())
-      throw new IllegalStateException("The card is not fully loadeded yet.")
-    data.removeFirst();
-    data.addFirst(f0);
+      throw new IllegalStateException("The card is not fully loadeded yet.");
+    data.set(0,content);
   }
-
-  void setField(int fieldNumber, String content);
 
   /**
    * Returns the next field.
@@ -110,7 +107,7 @@ class FDCard implements Card
   public String toString()
   {
     var joiner = java.util.stream.Collectors.joining("\t");
-    var result = data.stream().map(Card::canonicalField).collect(joiner);
+    var result = data.stream().map(FDCard::canonicalField).collect(joiner);
     return result;
   }
 }
