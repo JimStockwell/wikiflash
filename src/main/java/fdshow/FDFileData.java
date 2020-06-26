@@ -17,7 +17,6 @@ public class FDFileData extends FDCards // which extends CardsHolder
 {
   Header header;
   FieldNames fieldNames;
-  FDCards cards;
 
   public void loadFrom(BufferedReader r)
   {
