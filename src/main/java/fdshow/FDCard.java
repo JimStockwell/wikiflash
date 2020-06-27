@@ -96,22 +96,32 @@ class FDCard extends Card
     }
   }
 
-  private static boolean needsFixing(String x) {
-    return x.contains(System.lineSeparator()) || x.contains("\"");
-  }
-  private static String fixQuotes(String x) {
-    return x.replace("\"","\"\"");
-  }
-  private static String fixNewLines(String x) {
-    return x.replace(System.lineSeparator(),"\r\n");
-  }
-  private static String quoteIt(String x) {
-    return "\"" + x + "\"";
-  }
   
   private static String canonicalField(String s)
   {
-    return needsFixing(s) ? quoteIt(fixQuotes(fixNewLines(s))) : s;
+    class Fixer {
+
+      private boolean needsFixing(String x) {
+        return x.contains(System.lineSeparator()) || x.contains("\"");
+      }
+
+      private String fixQuotes(String x) {
+        return x.replace("\"","\"\"");
+      }
+
+      private String fixNewLines(String x) {
+        return x.replace(System.lineSeparator(),"\r\n");
+      }
+
+      private String quoteIt(String x) {
+        return "\"" + x + "\"";
+      }
+
+      public String fix(String x) {
+        return needsFixing(x) ? quoteIt(fixQuotes(fixNewLines(x))) : x;
+      }
+    }
+    return new Fixer().fix(s);
   }
 
   public String toString()
