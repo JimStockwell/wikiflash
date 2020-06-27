@@ -96,13 +96,22 @@ class FDCard extends Card
     }
   }
 
+  private static boolean needsFixing(String x) {
+    return x.contains(System.lineSeparator()) || x.contains("\"");
+  }
+  private static String fixQuotes(String x) {
+    return x.replace("\"","\"\"");
+  }
+  private static String fixNewLines(String x) {
+    return x.replace(System.lineSeparator(),"\r\n");
+  }
+  private static String quoteIt(String x) {
+    return "\"" + x + "\"";
+  }
+  
   private static String canonicalField(String s)
   {
-    if(s.contains("\n") || s.contains("\""))
-      // Quote the begining and end, and replace solo quotes with pairs.
-      return "\"" + s.replace("\"","\"\"") + "\"";
-    else
-      return s;
+    return needsFixing(s) ? quoteIt(fixQuotes(fixNewLines(s))) : s;
   }
 
   public String toString()
