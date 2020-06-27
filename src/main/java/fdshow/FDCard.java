@@ -11,6 +11,7 @@ import java.io.OutputStream;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A Card, as read from, and writable to, a Flashcards Deluxe export file.
@@ -95,7 +96,6 @@ class FDCard extends Card
       throw new Error("Unexpected IOException");
     }
   }
-
   
   private static String canonicalField(String s)
   {
@@ -126,17 +126,14 @@ class FDCard extends Card
 
   public String toString()
   {
-    var joiner = java.util.stream.Collectors.joining("\t");
-    //
-    // TODO: This should be simplified...
-    //
-    var contents = new LinkedList<String>();
-    var allData = getData();
+    Map<String,String> content = getData();
+    var sb = new StringBuilder();
     
-    for(int i=0; i<fieldNames.length(); i++)
-      contents.add(allData.get(fieldNames.data[i]));
-    var result = contents.stream().map(FDCard::canonicalField).collect(joiner);
-    return result;
+    for(int i=0; i<fieldNames.length(); i++) {
+      sb.append(canonicalField(content.get(fieldNames.data[i])));
+      if (i < fieldNames.length()-1) sb.append("\t");
+    }
+    return sb.toString();
   }
 }
 
