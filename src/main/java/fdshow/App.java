@@ -8,6 +8,7 @@ package fdshow;
  */
 
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.BufferedReader;
 import java.io.FileOutputStream;
 import java.io.File;
@@ -32,7 +33,6 @@ public class App
         FDFileData fcData = new FDFileData();
         fcData.loadFrom(new BufferedReader( new FileReader( fcFile ) ) );
 
-/*
         //
         // Load the wiki data
         //
@@ -45,7 +45,7 @@ public class App
         // (And mark them in the flashcard file and the wiki file)
         //
         wData.addNewCardsFrom(fcData);
-*/       
+
         //
         // Save the flashcard data
         //
@@ -53,14 +53,17 @@ public class App
         if( !renamed )
           throw new Error("Could not rename flashcard file to backup");
         fcData.saveTo(new FileOutputStream( args[0] ) );
-/*
+
         //
         // Save the wiki data
         //
         renamed = wFile.renameTo(new File(args[1] + ".bak"));
         if( !renamed )
           throw new Error("Could not rename wiki file to backup");
-        wData.saveTo(new FileWriter( wFile ));
-*/
+        try {
+          wData.saveTo(new FileWriter( wFile ));
+        } catch (java.io.IOException e) {
+          throw new Error("IO Exception writing wiki file: "+wFile.getName(),e);
+        }
     }
 }

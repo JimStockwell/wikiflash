@@ -18,7 +18,7 @@ public class FDFileDataTest
     {
         String baseName = "src/test/resources/All.txt";
         File fcFile=new File(baseName);
-        assertEquals(fcFile.length(), 2706L);
+        assertEquals(fcFile.getCanonicalPath(), 2706L, fcFile.length());
 
         FDFileData fcData = new FDFileData();
         fcData.loadFrom(new BufferedReader( new FileReader( fcFile ) ) );
@@ -27,7 +27,7 @@ public class FDFileDataTest
         if(outFile.exists())
           outFile.delete();
         fcData.saveTo(new FileOutputStream(outFile));
-        assertEquals(outFile.length(), 2706L);
+        assertEquals(outFile.getCanonicalPath(), 2706L, outFile.length());
 
         var file1Contents = Files.readAllBytes(fcFile.toPath());
         var file2Contents = Files.readAllBytes(outFile.toPath());

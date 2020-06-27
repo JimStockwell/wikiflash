@@ -10,56 +10,56 @@ import java.io.BufferedReader;
 import java.io.OutputStream;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.HashMap;
 
 /**
  * A Card, as read from, and writable to, a Flashcards Deluxe export file.
+ *
+ * Contains the fields the wiki user is interested in,
+ * plus scheduling and other "INFO" data.
  *
  * Unlike Header, FieldNames, and Cards,
  * this class (Card) is not loaded by the constructor.
  */
 
-class FDCard implements Card
+
+class FDCard extends Card
 {
   FieldNames fieldNames;
 
-  /**
-   * The data stored in the flashcard fields.
-   * Control characters that are part of the persistant storage control,
-   * for example quotes at the end of a multiline field, are not included.
-   */
-  List<String> data;
-
   FDCard(FieldNames fields) {
-    data = new LinkedList<String>();
+    super();
     fieldNames = fields;
   }
 
+  /**
+   *  Load the contents of each field from the Reader
+   */
   void loadFields(Reader r) {
-    for(int i=0; i<fieldNames.length(); i++)
-      data.add(nextField(r));
+    var c = new HashMap<String,String>();
+    for(int i=0; i<fieldNames.length(); i++) {
+      c.put(fieldNames.data[i],nextField(r));
+    }
+    setData(c);
   }  
-
-  private boolean cardIsFullyLoaded() {
-    return data.size()==fieldNames.length();
-  }
-
-  public String getField0() {
-    if (!cardIsFullyLoaded())
-      throw new IllegalStateException("The card is not fully loadeded yet.");
-    return data.get(0);
-  }
-
-  public void setField0(String content) {
-    if (!cardIsFullyLoaded())
-      throw new IllegalStateException("The card is not fully loadeded yet.");
-    data.set(0,content);
-  }
 
   /**
    * Returns the next field.
    *
    * Between calls, the Reader points at the start of a field,
    * just after any preceeding delimiters.
+   *
+   * Control characters that are part of the persistant storage control,
+   * for example quotes at the end of a multiline field, are not included.
+   *
+   * FDCard's format:
+   * If there are " (lone quotes) or line seperators in the field
+   * then start the field and end the field with a lone quote,
+   * replacing any lone quotes in the actual text with "" (repeated quotes).
+   * Line seperators are a \r\n sequences.
+   *
+   * Internally (that is, not in a Flashcards Deluxe file),
+   * quotes are not repeated and a system appropriate line seperator is used.
    */
   private String nextField(Reader r)
   {
@@ -80,6 +80,7 @@ class FDCard implements Card
           ch = r.read();
           assert ch=='\n' : "Return not followed by linefeed in flashcard file";
         }
+        return accum.toString().replaceAll("\r\n",System.lineSeparator());
       } else {
         while( ch != '\t' && ch != '\r' && ch != -1 ) {
           accum.append((char)ch);
@@ -88,8 +89,8 @@ class FDCard implements Card
         if( ch=='\r' ) {
           r.read(); // soak up \n
         }
+        return accum.toString();
       }
-      return accum.toString();
     } catch (java.io.IOException x) {
       throw new Error("Unexpected IOException");
     }
@@ -107,7 +108,15 @@ class FDCard implements Card
   public String toString()
   {
     var joiner = java.util.stream.Collectors.joining("\t");
-    var result = data.stream().map(FDCard::canonicalField).collect(joiner);
+    //
+    // TODO: This should be simplified...
+    //
+    var contents = new LinkedList<String>();
+    var allData = getData();
+    
+    for(int i=0; i<fieldNames.length(); i++)
+      contents.add(allData.get(fieldNames.data[i]));
+    var result = contents.stream().map(FDCard::canonicalField).collect(joiner);
     return result;
   }
 }
