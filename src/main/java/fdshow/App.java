@@ -21,7 +21,12 @@ import java.io.File;
 public class App 
 {
     public static void main( String[] args )
-    throws java.io.FileNotFoundException
+    throws java.io.FileNotFoundException,
+           java.io.IOException,
+           javax.xml.parsers.ParserConfigurationException,
+           javax.xml.transform.TransformerConfigurationException,
+           javax.xml.transform.TransformerException,
+           org.xml.sax.SAXException
     {
         if(args.length != 2)
           throw new Error("Usage: App flashcardFile wikiFile");
