@@ -54,6 +54,16 @@ class WikiData extends CardsHolder {
     w.append("</FlashCard>"+System.lineSeparator());
   }
 
+  public String toString() {
+    final var writer = new StringWriter();
+    try {
+      saveTo(writer);
+    } catch (Exception e) {
+      throw new Error(e);
+    }
+    return writer.toString();
+  }
+
   /**
    * Save the wiki file to the destination 'w'.
    */
@@ -70,17 +80,13 @@ class WikiData extends CardsHolder {
     }
 */
 
-            TransformerFactory transformerFactory = TransformerFactory.newInstance();
-            Transformer transformer = transformerFactory.newTransformer();
-            //for pretty print
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            DOMSource source = new DOMSource(doc);
-
-            //write to console or file
-            StreamResult output = new StreamResult(w);
-
-            //write data
-            transformer.transform(source, output);
+    final TransformerFactory transformerFactory =
+      TransformerFactory.newInstance();
+    final Transformer transformer = transformerFactory.newTransformer();
+    transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+    final DOMSource source = new DOMSource(doc);
+    final StreamResult output = new StreamResult(w);
+    transformer.transform(source, output);
 
 
   }
@@ -93,9 +99,67 @@ class WikiData extends CardsHolder {
             org.xml.sax.SAXException,
             java.io.IOException
     {
-    var factory = DocumentBuilderFactory.newInstance();
-    DocumentBuilder builder = factory.newDocumentBuilder();    
+    final var factory = DocumentBuilderFactory.newInstance();
+    final DocumentBuilder builder = factory.newDocumentBuilder();    
 
     doc = builder.parse(new InputSource(r));
+  }
+
+  private void addCardToDoc(Card c, Node parent) {
+
+    /*
+     * <card>
+     *   <field><name>Text 1</name> : <value>Question</value></field>
+     *   <field><name>Text 2</name> : <value>Answer</value></field>
+     * </card>
+     *
+     */
+    final var cardData = c.getData();
+    final String[] fieldNamesOfInterest = new String[] {
+      "Text 1", "Text 2", "Text 3", "Text 4", "Text 5",
+      "Picture 1", "Picture 2",
+      "Sound 2", "Category 1", "Statistics 1",
+      "Notes", "Extra Info"};
+    var cardNd = makeAndAppendElement("card",parent);
+    for (String fname : fieldNamesOfInterest) {
+      final String fdata = cardData.get(fname);
+      if (fdata != null) {
+        var fieldNd = makeAndAppendElement("field",cardNd);
+        var nameNd = makeAndAppendElement("name",fieldNd);
+        makeAndAppendText(fname,nameNd);
+        makeAndAppendText(" : ",fieldNd);
+        var valueNd = makeAndAppendElement("value",fieldNd);
+        makeAndAppendText(fdata,valueNd);
+      }
+    }
+  }
+
+  private Node makeAndAppendElement( String name, Node parent ) {
+    final var element = doc.createElement(name);
+    parent.appendChild(element);
+    return element;
+  }
+  private Node makeAndAppendText( String name, Node parent ) {
+    final var element = doc.createTextNode(name);
+    parent.appendChild(element);
+    return element;
+  }
+
+
+  void addCard(Card c)
+  {
+    if(c.getId()==null) {
+      NodeList nodes = doc.getElementsByTagName("new-cards-here");
+      if (nodes.getLength() == 0) {
+        throw new IllegalStateException("There is no new-cards-here element");
+      } else if (nodes.getLength() > 1) {
+        throw new IllegalStateException("More than one new-card-here element");
+      }
+      addCardToDoc(c, nodes.item(0));
+//      var textNode = doc.createTextNode(c.toString());
+//      nodes.item(0).appendChild(textNode);
+    } else {
+      throw new Error("TODO: confirm card isn't already present");
+    }
   }
 }

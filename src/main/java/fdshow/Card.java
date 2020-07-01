@@ -19,6 +19,7 @@ import java.util.HashMap;
 class Card
 {
   private Map<String,String> dataByField;
+  private Integer id;
 
   Card() {dataByField = new HashMap<String,String>();}
 
@@ -38,4 +39,7 @@ class Card
     dataByField = new HashMap<String,String>();
     dataByField.putAll(m);
   }
+
+  void setId(Integer id)  { this.id = id; } // null to reset the ID to "no ID"
+  Integer getId()         { return id; }
 }
