@@ -1,0 +1,41 @@
+All.txt
+All.txt.bak
+wiki.html
+wiki.html.bak
+todo.txt
+*.swp
+out
+nbactions.xml
+directions.txt
+
+##############################
+## Java
+##############################
+.mtj.tmp/
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+hs_err_pid*
+
+##############################
+## Maven
+##############################
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+pom.xml.bak
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jars
+
+##############################
+## OS X
+##############################
+.DS_Store
+

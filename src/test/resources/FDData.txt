@@ -1,0 +1,34 @@
+*	name	All
+*	card-order	3
+*	tts-voice	0,90,0,0,0
+*	tts-mp3-voice	,P|es-US|Miguel,,,
+*	tts-speed	0,-3,0,0,0
+*	tts-ignore-text-in-paren	1
+*	tsv	true
+*	category-1	Chinesex|Changing fonts reallocs|rooms 7|Joe|Java
+*	deck-stats-1	3327,3814,149781,40,526,644,670,1106,1428,474,844,746,617,678,546,624,714,532,887,626,652,887,878,760,468,526,337,434,931,917,629,616,650,1746,0,4,4,10,13,36,8,16,7,0,10,20,0,1,5,14,20,5,27,33,1,3,0,6,0,34,10,13,4,11,21835,3,135,141,121,155,173,92,114,107,118,111,108,146,154,129,160,127,121,139,97,109,119,135,103,118,108,152,130,110,147,18602,2,117,115,106,138,151,85,100,92,101,98,94,130,136,114,140,109,105,119,85,95,108,118,94,107,83,125,111,89,122,7388,0,10,10,34,66,124,31,64,30,0,30,61,0,13,10,60,80,10,99,112,10,10,0,20,0,141,38,48,20,43,8804,2,63,38,46,86,46,41,60,22,47,54,36,52,73,49,68,45,63,43,40,16,66,73,55,91,24,53,67,55,50,959535,105,6130,3251,5994,6972,6333,5126,6217,3939,4524,5855,6991,6662,5152,6804,5748,4148,5537,4420,6499,1914,6574,5031,7660,3729,3987,5281,5920,5335,7036,16065,13418,5792,5133,3650,3231
+Text 1	Text 2	Text 3	Text 4	Text 5	Picture 1	Picture 2	Sound 2	Category 1	Statistics 1	Notes	Extra Info
+"The Shirky Principle:
+
+“Institutions will try to _____ the problem to which they are the solution.” — Clay Shirky"	"The Shirky Principle:
+
+“Institutions will try to preserve the problem to which they are the solution.” — Clay Shirky"								1,0,0,0,1,2,0,2020-06-10 13:21,		
+"Consider the people who routinely disagree with you. See how confident they look while being dead wrong? That’s exactly how you look to them. - Scott Adams
+
+Scott Adams on how we believe we are good nonsense detectors, but really are not."									1,0,0,0,1,2,0,2020-06-10 13:25,		
+Pronunciation: 一类	"yīlèi
+
+Same kind"										
+Pronunciation: 类别	"lèibié
+
+Classification"										
+Pronunciation: 这类	"zhèlèi
+
+This kind"										
+Pronunciation: 父亲	fùqin										
+Meaning: 父亲	Father										
+"What does Ethereum describe itself as to individuals?
+
+Launched in 2015, Ethereum is […]."	Launched in 2015, Ethereum is the world’s programmable blockchain.	The name comes up now and then, but I forget what it is.									
+"It’s better to do less than you hoped than nothing at all.  No zero days.
+- James Clear"											

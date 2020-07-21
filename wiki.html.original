@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html><head>
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<style>
+card {
+  background-color: lightgrey;
+  border: 3px solid green;
+  display: block
+}
+field {
+  display: block
+}
+</style>
+</head><body>
+<H1>Unlocated Cards Placed Below</H1>
+Cards that are created in the flashcard program,
+but not assigned an id,
+or where the id does not exist in this HTML document,
+are placed just below.  <!-- Between the new-cards-here tags -->
+<new-cards-here></new-cards-here>
+</body></html>
