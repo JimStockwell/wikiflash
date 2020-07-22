@@ -5,7 +5,12 @@ package fdshow;
 //    CardsHolder
 //
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * Synchronizes data between a Flashcards Deluxe data file
@@ -13,7 +18,7 @@ import java.util.logging.Logger;
  *
  * The cards in the wiki file can be rearranged and organized
  * as the user sees fit,
- * and have additonal information put into the wiki file around the cards
+ * and have additional information put into the wiki file around the cards
  * to give them context or build upon what they say.
  *
  * When the flash card file and the wiki file are out-of-sync,
@@ -28,8 +33,30 @@ import java.util.logging.Logger;
  */
 class Sync {
 
-  static Logger logger = Logger.getLogger(Sync.class.getName());
-
+  static final Logger logger = Logger.getLogger(Sync.class.getName());
+  
+  /**
+   * Updates cards in to "to" that have ID matches in "from".
+   * @param from CardsHolder to update matches from
+   * @param to CardsHolder to update matches to
+   * @return the number of matches updated
+   */
+  private static int update(CardsHolder from, CardsHolder to) {
+    // get list to update
+    final List<Integer> theUpdates =
+            from.getIds()
+                .stream()
+                .filter(Objects::nonNull) // omit "new" cards
+                .filter(id -> to.contains(id)) // omit "deleted" cards
+                    // omit already equal cards
+//                .filter(id -> !from.getCard(id).equalsAsCard(to.getCard(id)))
+                .collect(Collectors.toList());
+    // update the items on the list
+    theUpdates.forEach(id -> to.updateCard(from.getCard(id)));
+    // return the number of items updated
+    return theUpdates.size();
+  }
+  
   /**
    * Synchronizes the CardsHolders in one direction only.
    * @param from the CardsHolder to use as the unchanging standard
@@ -39,16 +66,32 @@ class Sync {
     //
     // Process Deleted
     //
-    final var oldFrom = from.getIds();
-    final var oldTo = to.getIds();
-    final var deletedCards = oldTo.removeAll(oldFrom);
-//    to.deleteCards(deletedCards);
-//    logger.info("" + deletedCards.size() 
-//                   + " cards deleted in " 
-//                   + from.getName());
+    
+    // The cards that have been deleted in the source,
+    // but not yet the destination,
+    // are what we need to delete from the destination.
+    final ArrayList<Integer> wip = to.getIds();
+    wip.removeAll(from.getIds());
+    to.deleteCards(wip);
+    logger.log(Level.INFO, "{0} cards deleted", wip.size());
+    //
+    // Update modified cards
+    //
+    if (from.getNextId() != to.getNextId()) {
+        String msg = "Next ID is "
+                     + from.getNextId() 
+                     + " for source, but " 
+                     + to.getNextId() 
+                     + " for destination";
+        logger.severe(msg);
+        throw new IllegalStateException(msg);
+    }
+    final int updateCount = update(from, to);
+    logger.log(Level.INFO, "{0} cards updated", updateCount);
     //
     // Add new cards
     //
+    assert from.getNextId() == to.getNextId();
     final var newFrom = from.markBlankIds();
     final var it = newFrom.iterator();
     logger.fine("Adding the following card IDs");
@@ -57,18 +100,7 @@ class Sync {
       logger.fine(() -> " "+c.getId());
       to.addCard(c);
     }
-    logger.info("Added " + newFrom.size() + " new cards.");
-  }
-
-  /**
-   * Synchronizes the CardsHolders in both directions.
-   *
-   * @param first  the first of the two CardsHolders to synchronize.
-   * @param second the second of the two CardsHolders to synchronize.
-   */
-  static void twoWay(CardsHolder first, CardsHolder second) {
-    if (true) throw new UnsupportedOperationException();
-    oneWay(first,second);
-    oneWay(second,first);
+    logger.log(Level.INFO, "{0} cards added", newFrom.size());
+    
   }
 }

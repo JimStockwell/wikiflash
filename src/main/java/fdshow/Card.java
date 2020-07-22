@@ -75,21 +75,34 @@ class Card
   String getIdString()    { return id != null ? id.toString() : "<NULL>"; }
 
   /**
+   * Like classic equals,
+   * but ignores differences in subclasses
+   * @param o the object to test for equality (as a Card)
+   * @return true if the two objects contain the same data from the point
+   *         of view of a Card superclass.
+   */
+  public boolean equalsAsCard(Card o) {
+      if (this == o) {
+          return true;
+      }
+      if (o == null) {
+          return false;
+      }
+      boolean idsSame = Objects.equals(id,o.getId());
+      return idsSame && dataByField.equals(o.getData());
+  }
+  
+  /**
    * Returns true if same class and same fields
    * @param o the object to test for equality
    * @return true if same class and same fields
    */
   @Override
   public boolean equals(Object o) {
-      if (this == o) {
-          return true;
-      }
       if (o == null || getClass() != o.getClass()) {
           return false;
       }
-      var cast = (Card) o;
-      boolean idsSame = Objects.equals(id,cast.id);
-      return idsSame && dataByField.equals(cast.dataByField);
+      return equalsAsCard((Card) o);
   }
 
   @Override

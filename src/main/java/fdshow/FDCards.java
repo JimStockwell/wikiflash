@@ -194,17 +194,17 @@ class FDCards extends CardsHolder
     }
   }
   
-  /**
-   * Determines the next ID to assign a null IDed Card.
-   * @return the next ID to assign
-   */
-  private int getNextId() {
-    OptionalInt maxFound = data.stream()
-                               .filter(c -> c.getId() != null)
-                               .mapToInt(c -> c.getId())
-                               .max();
-    return maxFound.isEmpty() ? Integer.MIN_VALUE : maxFound.getAsInt();
-  }
+//  /**
+//   * Determines the next ID to assign a null IDed Card.
+//   * @return the next ID to assign
+//   */
+//  private int getNextId() {
+//    OptionalInt maxFound = data.stream()
+//                               .filter(c -> c.getId() != null)
+//                               .mapToInt(c -> c.getId())
+//                               .max();
+//    return maxFound.isEmpty() ? Integer.MIN_VALUE : maxFound.getAsInt();
+//  }
 
   /**
    * Sets the Cards with null ID to have an ID.
@@ -241,6 +241,12 @@ class FDCards extends CardsHolder
   @Override
   List<Card> getCards()
   {
-    return new ArrayList<Card>(data);
+    return new ArrayList<>(data);
+  }
+  
+  @Override
+  void deleteCards(List<Integer> ids) {
+      ids.forEach(i -> java.util.Objects.requireNonNull(i));
+      data.removeIf(c -> ids.contains(c.getId()));
   }
 }

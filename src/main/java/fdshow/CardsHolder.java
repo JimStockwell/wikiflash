@@ -9,6 +9,8 @@ import java.util.ArrayList;
  */
 
 import java.util.Collection;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * This class represents what is common between a flashcard file
@@ -39,6 +41,14 @@ abstract class CardsHolder {
     return list.size();
   }
 
+  int getNextId() {
+        final ArrayList<Integer> list = getIds();
+        final Optional<Integer> theMax = list.stream()
+                                             .filter(Objects::nonNull)
+                                             .max(Integer::compare);
+        return theMax.isEmpty() ? Integer.MIN_VALUE : theMax.get() + 1;
+  }
+    
   /**
    * Returns true if the CardsHolder contains a card with the specified ID,
    * otherwise false.
@@ -105,4 +115,15 @@ abstract class CardsHolder {
    * @return A complete list of the cards in this CardsHolder.
    */
   abstract List<Card> getCards();
+  
+  /**
+   * Deletes the cards with the specified IDs.
+   * If a card that is not present in the CardsHolder
+   * is named in the ids to delete,
+   * it is simply ignored.
+   * 
+   * @param ids the IDs of the cards to delete
+   * @throws NullPointerException if ids includes null or is null
+   */
+  abstract void deleteCards(List<Integer> ids);
 }

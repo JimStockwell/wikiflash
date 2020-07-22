@@ -54,6 +54,28 @@ public class CardTest
     final Card c2 = new Card(hm,2);
     assertNotEquals(c1.hashCode(),c2.hashCode());
   }
+  
+  @Test
+  void should_notEqualANull() {
+    var hm = new HashMap<String,String>();
+    hm.put("Text 1","Hello _____");
+    hm.put("Text 2","World");
+    final Card c1 = new Card(hm,1);
+    assertFalse(c1.equals(null));
+  }
+  
+    
+  @Test
+  void should_notBeEqual_when_differentClasses() {
+    final SimpleCard sc = new SimpleCard("A:B",3);
+    assertNotEquals(new Card(sc),sc);
+  }
+  
+  @Test
+  void should_BeEqualAsCards_although_differentSubclasses() {
+    final SimpleCard sc = new SimpleCard("A:B",3);
+    assertTrue((new Card(sc)).equalsAsCard(sc));
+  }
 }
 
 

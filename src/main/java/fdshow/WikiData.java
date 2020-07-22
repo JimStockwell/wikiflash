@@ -3,11 +3,11 @@ package fdshow;
 import java.io.Writer;
 import java.io.Reader;
 import java.io.StringWriter;
-import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
 import java.util.LinkedList;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.function.ToIntFunction;
 import java.util.function.Function;
 import java.util.OptionalInt;
@@ -16,7 +16,6 @@ import java.util.logging.Logger;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Node;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.TextNode;
 import org.jsoup.select.Elements;
@@ -53,6 +52,10 @@ class WikiData extends CardsHolder {
     makeMinimalWiki();
   }
 
+  WikiData(WikiData other) {
+      doc = other.doc.clone();
+      assert doc.hasSameValue(other.doc);
+  }
   /**
    * Converts the wiki data into a complete HTML string.
    *
@@ -232,14 +235,14 @@ class WikiData extends CardsHolder {
   /**
    * Creates a Card from the card at the specified Element in the DOM
    * 
-   * @param cardNode
+   * @param cardNode the DOM card node from which to create the Card
    * @return the created Card
    */
   private Card asCard(Element cardNode) {
     if (cardNode == null) return null;
 
     Integer id = null;
-    if( cardNode.attr("id") != null) {
+    if (!cardNode.attr("id").equals("")) {
         id = Integer.valueOf(cardNode.attr("id"));
     }
     Elements fields = cardNode.select("field");
@@ -363,5 +366,46 @@ class WikiData extends CardsHolder {
       return new ArrayList<>();
     }
     return cardElements.stream().map(e -> asCard(e)).collect(Collectors.toList());    
+  }
+  
+  private void deleteCard(Integer id) {
+      doc.select("card[id="+id+"]").remove();
+  }
+  
+  @Override
+  void deleteCards(List<Integer> ids) {
+        ids.forEach(i -> java.util.Objects.requireNonNull(i));
+        ids.forEach(i -> deleteCard(i));
+  }
+  
+  /**
+   * Returns true if same class and same fields
+   * @param o the object to test for equality
+   * @return true if same class and same fields
+   */
+  @Override
+  public boolean equals(Object o) {
+      if (this == o) {
+          return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+          return false;
+      }
+      var cast = (WikiData) o;
+      return doc.hasSameValue(cast.doc);
+  }
+
+  @Override
+  /**
+   * Returns 0.
+   * 
+   * This isn't ideal, but underlying classes just use Object's implementation.
+   * If we ever really want a real hashCode,
+   * we could perhaps do doc.
+   * 
+   * @return 0
+   */
+  public int hashCode() {
+    return 0;
   }
 }
