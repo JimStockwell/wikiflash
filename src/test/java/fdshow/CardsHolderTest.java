@@ -6,6 +6,7 @@ import org.junit.jupiter.params.provider.*;
 
 import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class CardsHolderTest
@@ -94,7 +95,11 @@ public class CardsHolderTest
     x.addCard(sc2);
 
     // test it
-    assertEquals(expected, new ArrayList<>(x.getCards()));
+    var actual = x.getCards()
+                  .stream()
+                  .map(c -> new Card(c))
+                  .collect(Collectors.toCollection(ArrayList::new));
+    assertEquals(expected, actual);
   }
 
   /**
@@ -120,9 +125,13 @@ public class CardsHolderTest
     
     // then change the got cards!
     gotCards.remove(0);
-
-    // make sure the CardsHolder still has both cards
-    assertEquals(expected, new ArrayList<>(x.getCards()));
+    
+      // make sure the CardsHolder still has both cards
+    var actual = x.getCards()
+                  .stream()
+                  .map(c -> new Card(c))
+                  .collect(Collectors.toCollection(ArrayList::new));
+    assertEquals(expected, actual);
   }
   
   @ParameterizedTest
@@ -135,7 +144,9 @@ public class CardsHolderTest
   @ParameterizedTest
   @MethodSource("createCardsHolderSubclasses")
   void should_throw_when_deleteCardsIncludesNulls(CardsHolder x) {
-    assertThrows(NullPointerException.class, () -> x.deleteCards(Arrays.asList(new Integer[] {null})));
+    assertThrows(
+            NullPointerException.class, 
+            () -> x.deleteCards(Arrays.asList(new Integer[] {null})));
   }
   
   @ParameterizedTest
@@ -164,7 +175,11 @@ public class CardsHolderTest
     // confirm we have only #2 left
     var expected = new ArrayList<Card>(1);
     expected.add(sc2);
-    assertEquals(expected, new ArrayList<>(x.getCards()),x.toString());
+    var actual = x.getCards()
+                  .stream()
+                  .map(c -> new Card(c))
+                  .collect(Collectors.toCollection(ArrayList::new));
+    assertEquals(expected, actual);
   }
 
   
@@ -184,7 +199,13 @@ public class CardsHolderTest
     var expected = new ArrayList<Card>(2);
     expected.add(sc1);
     expected.add(sc3);
-    assertEquals(expected, new ArrayList<>(x.getCards()));
+    
+//    var actual = new ArrayList<>(x.getCards());
+    var actual = x.getCards()
+                  .stream()
+                  .map(c -> new Card(c))
+                  .collect(Collectors.toCollection(ArrayList::new));
+    assertEquals(expected, actual);
   }
   
   /**

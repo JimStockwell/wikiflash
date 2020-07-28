@@ -10,10 +10,36 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileReader;
 import java.io.StringReader;
 import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
 
 public class FDCardTest extends FDFileData
 {
+    
+    @Test
+    public void should_makeTheSameCard_when_givenFieldData()
+    throws Exception
+    {
+        final var fields = new FieldNames(new String[] {"f1","f2"});
+        final FDCard cRead = new FDCard(new StringReader("a\tb"), fields);
+        final var cardData = new HashMap<String, String>();
+        cardData.put("f1", "a");
+        cardData.put("f2", "b");
+        
+        final FDCard cFromData = new FDCard(cardData, null, fields);
+        assertEquals(cRead, cFromData);        
+    }
+
+    @Test
+    public void should_makeTheSameCard_when_givenACard()
+    throws Exception
+    {
+        final var fields = new FieldNames(new String[] {"f1","f2"});
+        final FDCard cRead = new FDCard(new StringReader("a\tb"),fields);
+        final FDCard cCopy = new FDCard(cRead, fields);
+        assertEquals(cRead, cCopy);        
+    }
+    
     @Test
     public void writeAndReadShouldNotChangeData()
     throws Exception

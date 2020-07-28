@@ -1,9 +1,6 @@
 package fdshow;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.*;
 import org.junit.jupiter.params.provider.*;
@@ -14,7 +11,7 @@ public class CardTest
 {
   @Test
   void should_BeEqual_When_IsSame() {
-    var hm = new HashMap<String,String>();
+    final var hm = new HashMap<String,String>();
     hm.put("Text 1","Hello _____");
     hm.put("Text 2","World");
     final Card c1 = new Card(hm,1);
@@ -24,7 +21,7 @@ public class CardTest
 
   @Test
   void should_BeUnequal_When_IsDifferent() {
-    var hm = new HashMap<String,String>();
+    final var hm = new HashMap<String,String>();
     hm.put("Text 1","Hello _____");
     hm.put("Text 2","World");
     final Card c1 = new Card(hm,1);
@@ -34,7 +31,7 @@ public class CardTest
 
   @Test
   void should_hashSame_When_IsSame() {
-    var hm = new HashMap<String,String>();
+    final var hm = new HashMap<String,String>();
     hm.put("Text 1","Hello _____");
     hm.put("Text 2","World");
     final Card c1 = new Card(hm,1);
@@ -47,7 +44,7 @@ public class CardTest
   // but it's unlikely with a decent hashing method.
   @Test
   void should_hashDifferent_When_IsDifferent() {
-    var hm = new HashMap<String,String>();
+    final var hm = new HashMap<String,String>();
     hm.put("Text 1","Hello _____");
     hm.put("Text 2","World");
     final Card c1 = new Card(hm,1);
@@ -57,7 +54,7 @@ public class CardTest
   
   @Test
   void should_notEqualANull() {
-    var hm = new HashMap<String,String>();
+    final var hm = new HashMap<String,String>();
     hm.put("Text 1","Hello _____");
     hm.put("Text 2","World");
     final Card c1 = new Card(hm,1);

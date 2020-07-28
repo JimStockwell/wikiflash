@@ -32,11 +32,33 @@ class FDCard extends Card
    * Card to be constructed.
    *
    * @param r      the reader from which to read the Card fields
-   * @param fields the names of the fields that will be read in
+   * @param fields the field names in the order they will be read
    */
   FDCard(Reader r, FieldNames fields) {
     super(readCard(r,fields));
     fieldNames = fields;
+  }
+  /**
+   * Constructs a Card from the specified field content, card ID, and field names.
+   * The field names in <code>datByFields</code> and <code>fields</code>
+   * are expected to match.
+   * @param dataByField The data to fill the card with
+   * @param id The card ID number
+   * @param fields the field names in the order they will be written eventually
+   */
+  FDCard( Map<String,String> dataByField, Integer id, FieldNames fields) {
+      super(dataByField,id);
+      fieldNames = fields;
+  }
+  
+  /**
+   * Construct a Card from the specified card
+   * @param c      the card to use as a starting point
+   * @param fields the field names in the order they will be written eventually
+   */
+  FDCard(Card c, FieldNames fields) {
+      super(c);
+      fieldNames = fields;
   }
 
   /**
@@ -69,17 +91,17 @@ class FDCard extends Card
    * Between calls, the Reader points at the start of a field,
    * just after any preceeding delimiters.
    *
-   * Control characters that are part of the persistant storage control,
+   * Control characters that are part of the persistent storage control,
    * for example quotes at the end of a multiline field, are not included.
    *
    * FDCard's format:
-   * If there are " (lone quotes) or line seperators in the field
+   * If there are " (lone quotes) or line separators in the field
    * then start the field and end the field with a lone quote,
    * replacing any lone quotes in the actual text with "" (repeated quotes).
-   * Line seperators are a \r\n sequences.
+   * Line separators are a \r\n sequences.
    *
    * Internally (that is, not in a Flashcards Deluxe file),
-   * quotes are not repeated and a system appropriate line seperator is used.
+   * quotes are not repeated and a system appropriate line separator is used.
    *
    * @param r the source of the fields
    * @return the data associated with the next field
@@ -171,6 +193,7 @@ class FDCard extends Card
    * as a string suitable for writing into a Flashcards Deluxe data file.
    * @return the card in a Flashcards Deluxe suitable format.
    */
+  @Override
   public String toString()
   {
     final Map<String,String> content = getData();

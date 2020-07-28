@@ -23,4 +23,12 @@ public class FieldNamesTest
     assertEquals(6,fnObject.length());
     assertEquals(fieldNames, fnObject.toString());
   }
+  
+  @Test
+  public void should_constructFromArray()
+  {
+      String[] target = new String[] {"f1","f2","f3"};
+      String[] actual = new FieldNames(target).toArray();
+      assertArrayEquals(target,actual);
+  }
 }

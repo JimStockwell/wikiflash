@@ -10,6 +10,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.Disabled;
 
 public class SyncTest
@@ -25,7 +26,15 @@ public class SyncTest
         var wiki = new WikiData();
 
         Sync.oneWay(flashCards,wiki);
-        assertEquals(flashCards.getCards(),wiki.getCards());
+        var listFC = flashCards.getCards()
+                               .stream()
+                               .map(c->new Card(c))
+                               .collect(Collectors.toList());
+        var listW  =       wiki.getCards()
+                               .stream()
+                               .map(c->new Card(c))
+                               .collect(Collectors.toList());
+        assertEquals(listFC,listW);
     }
 
     @Test

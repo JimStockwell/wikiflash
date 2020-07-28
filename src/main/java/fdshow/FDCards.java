@@ -1,17 +1,11 @@
 package fdshow;
 
-import java.io.Reader;
 import java.io.StringReader;
 import java.io.BufferedReader;
-import java.util.LinkedList;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.OptionalInt;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.regex.Pattern;
 import java.util.logging.Logger;
 
 /**
@@ -142,7 +136,7 @@ class FDCards extends CardsHolder
       throw new IllegalArgumentException(msg);
     }
 
-    data.add(new Card(c));
+    data.add(new FDCard(c,fields));
   }
 
   // See the superclass for javadoc
@@ -190,7 +184,7 @@ class FDCards extends CardsHolder
     assert data != null;
     for (final var iter = data.listIterator(); iter.hasNext();) {
       final Card x = iter.next();
-      iter.set(new Card(x.getData(),null));
+      iter.set(new FDCard(x.getData(),null,fields));
     }
   }
   
@@ -218,7 +212,7 @@ class FDCards extends CardsHolder
     for(final var iter = data.listIterator(); iter.hasNext(); ) {
       final Card oldCard = iter.next();
       if (oldCard.getId() == null) {
-        Card newCard = new Card(oldCard.getData(),nextId++);
+        Card newCard = new FDCard(oldCard.getData(),nextId++,fields);
         iter.set(newCard);
       }
     }

@@ -13,6 +13,13 @@ class FieldNames
   String[] data;
 
   /**
+   * Constructs a list of field names from the given array of field names.
+   * @param names the names of the fields
+   */
+  FieldNames(String[] names) {
+      data = names.clone();
+  }
+  /**
    * Constructs a list of field names from the given BufferedReader.
    * The reader is expected to be positioned just after the header information.
    *
@@ -33,6 +40,7 @@ class FieldNames
    *
    * @return the field list
    */
+  @Override
   public String toString()
   {
     var joiner = java.util.stream.Collectors.joining("\t","","\r\n");
@@ -49,5 +57,10 @@ class FieldNames
   int length()
   {
     return data.length;
+  }
+  
+  String[] toArray()
+  {
+      return data.clone();
   }
 }

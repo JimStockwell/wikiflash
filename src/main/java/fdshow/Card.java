@@ -37,7 +37,7 @@ class Card
    */
   Card( Map<String,String> dataByField, Integer id ) {
     assert dataByField != null;
-    this.dataByField = new HashMap<String,String>(dataByField);
+    this.dataByField = new HashMap<>(dataByField);
     this.id = id;
   }
 
@@ -55,7 +55,7 @@ class Card
    * @return the Map
    */ 
   Map<String,String> getData() {
-    return new HashMap<String,String>(dataByField);
+    return new HashMap<>(dataByField);
   }
 
   /**
@@ -81,7 +81,7 @@ class Card
    * @return true if the two objects contain the same data from the point
    *         of view of a Card superclass.
    */
-  public boolean equalsAsCard(Card o) {
+  public boolean equalsAsCard(Card o) { // TODO: can we replace this with a cast?
       if (this == o) {
           return true;
       }
