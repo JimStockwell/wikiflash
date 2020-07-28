@@ -11,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.OutputStream;
 import java.io.FileReader;
 import java.io.FileOutputStream;
+import java.io.StringReader;
 import java.util.Map;
 
 public class FDFileDataTest 
@@ -57,7 +58,25 @@ public class FDFileDataTest
         assertEquals(Integer.MIN_VALUE+1,newIds.get(1).intValue());
         assertEquals(Integer.MIN_VALUE+5,newIds.get(5).intValue());
     }
+    @Test
+    public void should_writeAndReadUnchanged_after_SetAndGetIds()
+    throws java.io.FileNotFoundException, java.io.IOException
+    {
+        String baseName = FDData.NAME;
+        File fcFile=new File(baseName);
+        assertEquals(FDData.SIZE, fcFile.length());
 
+        FDFileData fcData = new FDFileData();
+        fcData.loadFrom(new BufferedReader( new FileReader( fcFile ) ) );
+        var newIds = fcData.markBlankIds();
+        
+        var outStream = new java.io.ByteArrayOutputStream();
+        fcData.saveTo(outStream);
+        FDFileData fcData2 = new FDFileData();
+        fcData2.loadFrom(new BufferedReader(new StringReader(outStream.toString())));
+        assertTrue(fcData.getCard(0).equalsAsCard(fcData2.getCard(0)));        
+    }
+    
     @Test
     public void readAndWriteMakesNoChange()
     throws java.io.FileNotFoundException, java.io.IOException
