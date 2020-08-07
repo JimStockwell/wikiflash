@@ -88,17 +88,17 @@ class Card
       if (o == null) {
           return false;
       }
-      boolean idsSame = Objects.equals(id,o.getId());
+      boolean idsSame = Objects.equals(id, o.getId());
       return idsSame && dataByField.equals(o.getData());
   }
-  
+
   /**
-   * Returns true if same class and same fields
+   * Returns true if same class and same fields.
    * @param o the object to test for equality
    * @return true if same class and same fields
    */
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(final Object o) {
       if (o == null || getClass() != o.getClass()) {
           return false;
       }
@@ -107,6 +107,6 @@ class Card
 
   @Override
   public int hashCode() {
-    return Objects.hash(dataByField,id);
+    return Objects.hash(dataByField, id);
   }
 }

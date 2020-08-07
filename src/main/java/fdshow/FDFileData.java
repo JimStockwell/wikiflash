@@ -1,10 +1,9 @@
 package fdshow;
 
-import java.io.Reader;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.OutputStream;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Represents a Flashcards Deluxe export data file.
@@ -21,11 +20,24 @@ public class FDFileData extends FDCards
    */
   private FieldNames fieldNames;
 
+  @Override
+  void saveTo(File file) 
+  throws java.io.IOException
+  {
+      var fw = new FileWriter(file);
+      try (java.io.PrintWriter pw = new java.io.PrintWriter(fw)) {
+          pw.print(header.toString());
+          pw.print(fieldNames.toString());
+          pw.print(super.toString());
+      }
+  }
+  
   /**
    * Loads the Flashcards Deluxe export data file into this instance.
    *
    * @param r the BufferedReader to read the datafile from
    */
+  @Override
   public void loadFrom(BufferedReader r)
   {
     header = new Header(r);

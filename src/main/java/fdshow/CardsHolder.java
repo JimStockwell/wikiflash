@@ -1,5 +1,8 @@
 package fdshow;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -17,6 +20,18 @@ import java.util.Optional;
  * and a wiki file that contains, among other things, flashcards.
  */
 abstract class CardsHolder {
+    
+  /**
+   * Saves the CardsHolder to the indicated file, and closes the file.
+   * @param file the file to save the CardsHolder to
+   */
+  abstract void saveTo(File file) throws IOException;
+  
+  /**
+   * Loads the CardsHolder from the given BufferedReader.
+   * @param r the BufferedReader to load the CardsHolder from.
+   */
+  abstract void loadFrom(BufferedReader r) throws java.io.IOException;
   
   /**
    * Returns a list of IDs in the CardsHolder.

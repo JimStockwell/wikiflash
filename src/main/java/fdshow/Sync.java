@@ -41,20 +41,75 @@ class Sync {
    * @param to CardsHolder to update matches to
    * @return the number of matches updated
    */
-  private static int update(CardsHolder from, CardsHolder to) {
+   static int update(CardsHolder from, CardsHolder to) {
     // get list to update
     final List<Integer> theUpdates =
             from.getIds()
                 .stream()
                 .filter(Objects::nonNull) // omit "new" cards
                 .filter(id -> to.contains(id)) // omit "deleted" cards
-                    // omit already equal cards
-//                .filter(id -> !from.getCard(id).equalsAsCard(to.getCard(id)))
                 .collect(Collectors.toList());
     // update the items on the list
     theUpdates.forEach(id -> to.updateCard(from.getCard(id)));
+    // and report
+    logger.log(Level.INFO, "{0} cards updated", theUpdates.size());
+
     // return the number of items updated
     return theUpdates.size();
+  }
+    /**
+     * Deleted cards that are in the destination but not the source.
+     * 
+     * The thought here is that such cards came about by having
+     * been deleted on the source, and that deletion needs to
+     * be synced over to the destination.
+     * 
+     * @param base the CardsHolder used as a reference
+     * @param update the CardsHolder to delete cards out of
+     */
+    static void deleteExtraCards(CardsHolder base, CardsHolder update) {
+        final ArrayList<Integer> wip = update.getIds();
+        wip.removeAll(base.getIds());
+        update.deleteCards(wip);
+        logger.log(Level.INFO, "{0} cards deleted", wip.size());        
+    }
+  /**
+   * Moves unmatched cards, that have IDs, from 'from' to 'to'.
+   * @param from the CardsHolder to move the cards from
+   * @param to   the CardsHolder to move the cards to
+   */
+  static int copyUnmatchedIdedCards(CardsHolder from, CardsHolder to) {
+        final List<Integer> toMove =
+            from.getIds()
+                .stream()
+                .filter(Objects::nonNull)
+                .filter(id -> !to.contains(id))
+                .collect(Collectors.toList());
+        toMove.forEach(id -> to.addCard(from.getCard(id))); 
+        final int count = toMove.size();
+        logger.info("Moved "
+                + count
+                + " unmatched but IDed cards from source to destination");
+        return count;
+  }
+  
+  static void markAndAddNewCards(CardsHolder from, CardsHolder to) {
+    //
+    // Get marked cards to copy
+    //
+    final var newFrom = from.markBlankIds();
+    //
+    // Copy them
+    //
+    final var it = newFrom.iterator();
+    while (it.hasNext()) {
+      final Card c = from.getCard(it.next());
+      to.addCard(c);
+    }
+    //
+    // Report on the results
+    //
+    logger.log(Level.INFO, "{0} cards added", newFrom.size());
   }
   
   /**
@@ -62,18 +117,12 @@ class Sync {
    * @param from the CardsHolder to use as the unchanging standard
    * @param to   the CardsHolder to change to bring into conformity
    */
-  static void oneWay(CardsHolder from, CardsHolder to) {
+  static void xxx(CardsHolder from, CardsHolder to) {
     //
     // Process Deleted
     //
-    
-    // The cards that have been deleted in the source,
-    // but not yet the destination,
-    // are what we need to delete from the destination.
-    final ArrayList<Integer> wip = to.getIds();
-    wip.removeAll(from.getIds());
-    to.deleteCards(wip);
-    logger.log(Level.INFO, "{0} cards deleted", wip.size());
+    deleteExtraCards(from,to);
+
     //
     // Update modified cards
     //
@@ -87,20 +136,10 @@ class Sync {
         throw new IllegalStateException(msg);
     }
     final int updateCount = update(from, to);
-    logger.log(Level.INFO, "{0} cards updated", updateCount);
-    //
+     //
     // Add new cards
     //
-    assert from.getNextId() == to.getNextId();
-    final var newFrom = from.markBlankIds();
-    final var it = newFrom.iterator();
-    logger.fine("Adding the following card IDs");
-    while (it.hasNext()) {
-      final Card c = from.getCard(it.next());
-      logger.fine(() -> " "+c.getId());
-      to.addCard(c);
-    }
-    logger.log(Level.INFO, "{0} cards added", newFrom.size());
+    markAndAddNewCards(from,to);
     
   }
 }

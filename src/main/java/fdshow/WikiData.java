@@ -1,5 +1,11 @@
 package fdshow;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.Writer;
 import java.io.Reader;
 import java.io.StringWriter;
@@ -18,6 +24,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.TextNode;
+import org.jsoup.parser.ParseError;
+import org.jsoup.parser.Parser;
 import org.jsoup.select.Elements;
 
 /**
@@ -64,28 +72,24 @@ class WikiData extends CardsHolder {
   @Override
   public String toString() {
     assert doc != null;
-    final var writer = new StringWriter();
-    try {
-      saveTo(writer);
-    } catch (Exception e) {
-      throw new Error(e);
-    }
-    return writer.toString();
+    return doc.outerHtml();
   }
 
   /**
    * Save the HTML file to the specified destination.
    * @param w the destination to save the HTML file to.
    * @throws java.io.IOException if there is a problem writing to the Writer
-   */
-  void saveTo(Writer w) 
+   */ 
+ 
+  @Override
+  void saveTo(File file) 
   throws java.io.IOException
   {
     assert doc != null;
-    try {
-      w.append(doc.outerHtml());
-    } catch (java.io.IOException e) {
-      throw new java.io.IOException("Trying to write HTML wiki file",e);
+    try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+        writer.write(doc.outerHtml());
+    } catch (IOException e) {
+        throw new java.io.IOException("Trying to write HTML wiki file",e);
     }
   }
 
@@ -107,12 +111,17 @@ class WikiData extends CardsHolder {
    * @param r The reader from which to get the wiki file.
    * @throws java.io.IOException if there is a problem loading from the reader.
    */
-  void loadFrom(Reader r)
+  @Override
+  void loadFrom(BufferedReader r)
   throws java.io.IOException
   {
     final var w = new StringWriter();
     r.transferTo(w);
-    doc = Jsoup.parse(w.toString());
+    String input = w.toString();
+    doc = Jsoup.parse(input);
+//    if(!doc.outerHtml().equals(input)) {
+//        throw new IllegalArgumentException("So called HTML file does not appear to be valid HTML");
+//    }
   }
 
   /**

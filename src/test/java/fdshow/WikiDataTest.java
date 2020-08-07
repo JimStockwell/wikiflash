@@ -1,5 +1,8 @@
 package fdshow;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
@@ -42,7 +45,7 @@ public class WikiDataTest
     }
 
     @Test
-    public void updatesDontMoveCards()
+    public void should_keepCardsInSameOrder_when_updating()
     {
       final var wd = new WikiData();
 
@@ -63,7 +66,7 @@ public class WikiDataTest
     }
 
     @Test
-    public void canUpdate()
+    public void should_changeCardText_when_updating()
     {
       final var wd = new WikiData();
 
@@ -79,7 +82,7 @@ public class WikiDataTest
     }
          
     @Test
-    public void addOverwritingDisallowed()
+    public void should_throwException_when_addingExistingCard()
     {
         try {
           final String testInput = "Side 1:Side 2";

@@ -2,6 +2,7 @@ package fdshow;
 
 import java.io.StringReader;
 import java.io.BufferedReader;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,6 +33,11 @@ class FDCards extends CardsHolder
    */
   private FieldNames fields;
 
+  @Override
+  void saveTo(File file)
+  throws java.io.IOException {
+      throw new UnsupportedOperationException();
+  }
   /**
    * Loads an FDCards collection
    * from the specified Flashcards Deluxe Reader.
@@ -45,15 +51,24 @@ class FDCards extends CardsHolder
    * @param fields  The field list that describes the fields about to be read.
    *                Used for infering the number of fields to read.
    */
-  void loadFrom(java.io.Reader r, FieldNames fields)
+  void loadFrom(java.io.BufferedReader r, FieldNames fields)
   {
     this.fields = fields;
-    data = new java.util.LinkedList<Card>();
+    data = new java.util.LinkedList<>();
     while(hasNextCard(r)) {
       data.add(nextCard(r));
     }
   }
 
+  /**
+   * loadFrom, without a fields list, is not supported.
+   * @param r the Reader to load from
+   */
+  @Override
+  void loadFrom(java.io.BufferedReader r) {
+      throw new UnsupportedOperationException();
+  }
+  
   /**
    * Constructs an empty FDCards,
    * ready to read cards with the specified fields.
