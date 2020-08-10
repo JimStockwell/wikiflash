@@ -3,17 +3,13 @@ package fdshow;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Writer;
-import java.io.Reader;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.LinkedList;
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.function.ToIntFunction;
 import java.util.function.Function;
 import java.util.OptionalInt;
@@ -24,8 +20,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.TextNode;
-import org.jsoup.parser.ParseError;
-import org.jsoup.parser.Parser;
 import org.jsoup.select.Elements;
 
 /**
@@ -119,13 +113,12 @@ class WikiData extends CardsHolder {
     r.transferTo(w);
     String input = w.toString();
     doc = Jsoup.parse(input);
-//    if(!doc.outerHtml().equals(input)) {
-//        throw new IllegalArgumentException("So called HTML file does not appear to be valid HTML");
-//    }
   }
-
+  
   /**
    * Updates a given card.
+   * The old contents will be removed and new contents provided.
+   * Only standard fields from the new card will be included.
    * 
    * @param newCard The new card to update with
    * @param oldCard The wiki document "card" node
@@ -140,18 +133,26 @@ class WikiData extends CardsHolder {
       throw new IllegalArgumentException("oldCard can't be null");
 
     final var cardData = newCard.getData();
-    final String[] fieldNamesOfInterest = new String[] {
-      "Text 1", "Text 2", "Text 3", "Text 4", "Text 5",
-      "Picture 1", "Picture 2",
-      "Sound 2", "Category 1", "Statistics 1",
-      "Notes", "Extra Info"};
     final Integer id = newCard.getId();
 
     oldCard.empty();
     final var cardNd = oldCard;
 
-    for (String fname : fieldNamesOfInterest) {
+    for (String fname : Card.FIELD_NAMES_OF_INTEREST) {
       final String fdata = cardData.get(fname);
+      appendCardField(fname, fdata, cardNd);
+    }
+  }
+
+  /**
+   * Append the specified card field name and data
+   * below the specified card DOM element, as the last child.
+   * 
+   * @param fname The name of the field
+   * @param fdata The data contained in the field
+   * @param cardNd The card node in the DOM
+   */
+  private void appendCardField(String fname, String fdata, Element cardNd) {
       if (fdata != null && !fdata.strip().isEmpty()
                         && !fname.equals("Statistics 1")) {
         final var fieldNd = makeAndAppendElement("field",cardNd);
@@ -161,9 +162,8 @@ class WikiData extends CardsHolder {
         final var valueNd = makeAndAppendElement("value",fieldNd);
         makeAndAppendText(fdata,valueNd);
       }
-    }
   }
-
+  
   /**
    * Adds the specified card to the document, under the specified parent.
    * Places it as the last sibling.
@@ -193,7 +193,8 @@ class WikiData extends CardsHolder {
   }
 
   /**
-   * Creates the named element and makes it a child of the specified parent.
+   * Creates the named element and makes it a child of the specified parent,
+   * as the last child.
    *
    * @param name   the tag of the element to create
    * @param parent the element to use as the parent for the created element
@@ -230,7 +231,7 @@ class WikiData extends CardsHolder {
 
     final Integer id = c.getId();
     if (id == null ) 
-      throw new IllegalArgumentException("Can't update from an IDed card.");
+      throw new IllegalArgumentException("Can't update from an unIDed card.");
     if( !contains(id)) {
       String msg =
         String.format("Can't update id '%d' as it is not present.",id);

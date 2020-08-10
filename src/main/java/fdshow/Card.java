@@ -109,4 +109,13 @@ class Card
   public int hashCode() {
     return Objects.hash(dataByField, id);
   }
+  
+  /**
+   * The standard field names.
+   */
+  static final String[] FIELD_NAMES_OF_INTEREST = new String[] {
+      "Text 1", "Text 2", "Text 3", "Text 4", "Text 5",
+      "Picture 1", "Picture 2","Picture 3","Picture 4","Picture 5",
+      "Sound 1","Sound 2", "Category 1", "Statistics 1",
+      "Notes", "Extra Info"};
 }

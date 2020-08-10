@@ -101,4 +101,21 @@ public class WikiDataTest
           fail();
         }
     }
+         
+    @Test
+    public void should_throwException_when_updatingUnIDedCard()
+    {
+        try {
+          final String testInput = "Side 1:Side 2";
+          final SimpleCard sc = new SimpleCard(testInput);
+          final var wd = new WikiData();
+          IllegalArgumentException thrown = assertThrows(
+            IllegalArgumentException.class,
+            () -> wd.updateCard(sc));
+          assertEquals("Can't update from an unIDed card.",thrown.getMessage());
+        } catch (Exception e) {
+          e.printStackTrace();
+          fail();
+        }
+    }
 }
