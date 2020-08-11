@@ -12,6 +12,32 @@ import org.junit.jupiter.api.Test;
 public class WikiDataTest
 {
     @Test
+    public void should_throw_when_markBlankIdsFindsANonumericID() 
+    throws IOException
+    {
+        // make a WikiData with a card in it that has a non-numeric ID
+        final String testString =
+            "<!DOCTYPE html><html>"
+          + "  <head></head>"
+          + "  <body>"
+          + "    <card id='abc'>"
+          + "       <field><name>Text 1</name> : <value>Q</value></field>"
+          + "    </card>"
+          + "    <new-cards-here></new-cards-here>"
+          + "  </body>"
+          + "</html>";
+        final var r = new BufferedReader(new StringReader(testString));
+        final var wd = new WikiData();
+        wd.loadFrom(r);
+        
+        // Check that it throws an Exception (due to id='abc')
+        var e = assertThrows(
+            NumberFormatException.class,
+            () -> wd.markBlankIds());
+        assertEquals("Illegal card id 'abc'", e.getMessage());
+    }
+    
+    @Test
     public void markBlankIdsReallyMarks() {
       final var wd = new WikiData();
 
