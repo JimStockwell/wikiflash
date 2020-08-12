@@ -33,6 +33,10 @@ class FDCards extends CardsHolder
    */
   private FieldNames fields;
 
+  /**
+   * Saves the CardsHolder to the indicated file, and closes the file.
+   * @param file the file to save the CardsHolder to
+   */
   @Override
   void saveTo(File file)
   throws java.io.IOException {
@@ -68,7 +72,7 @@ class FDCards extends CardsHolder
   void loadFrom(java.io.BufferedReader r) {
       throw new UnsupportedOperationException();
   }
-  
+
   /**
    * Constructs an empty FDCards,
    * ready to read cards with the specified fields.
@@ -108,7 +112,7 @@ class FDCards extends CardsHolder
     var result = data.stream().map(c -> c.toString()).collect(joiner);
     return result;
   }
- 
+
   /**
    * Reads and returns the next Card from the Reader.
    *
@@ -191,7 +195,7 @@ class FDCards extends CardsHolder
                      .map(c -> c.getId())
                      .collect(Collectors.toList()));
   }
-  
+
   // See the superclass for javadoc
   @Override
   void zapIds()
@@ -202,7 +206,7 @@ class FDCards extends CardsHolder
       iter.set(new FDCard(x.getData(),null,fields));
     }
   }
-  
+
 //  /**
 //   * Determines the next ID to assign a null IDed Card.
 //   * @return the next ID to assign
@@ -252,9 +256,9 @@ class FDCards extends CardsHolder
   {
     return new ArrayList<>(data);
   }
-  
+
   @Override
-  void deleteCards(List<Integer> ids) {
+  void deleteCards(final List<Integer> ids) {
       ids.forEach(i -> java.util.Objects.requireNonNull(i));
       data.removeIf(c -> ids.contains(c.getId()));
   }

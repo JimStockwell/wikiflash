@@ -15,7 +15,6 @@ import java.util.function.ToIntFunction;
 import java.util.function.Function;
 import java.util.OptionalInt;
 import java.util.stream.Collectors;
-import java.util.logging.Logger;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -29,18 +28,8 @@ import org.jsoup.select.Elements;
  *
  * Existing non-card data in the wiki file is not disturbed.
  *
- * The cards are read and written in the following general kind of structure.
- *
- * <pre>{@code
- * <card>
- *   <field><name>Text 1</name> : <value>Question</value></field>
- *   <field><name>Text 2</name> : <value>Answer</value></field>
- * </card>
- * }</pre>
  */
 class WikiData extends CardsHolder {
-
-  static Logger logger = Logger.getLogger(FDCards.class.getName());
 
   /**
    * Contains the wiki document that the class operates on.
@@ -55,23 +44,23 @@ class WikiData extends CardsHolder {
     makeMinimalWiki();
   }
 
-  WikiData(WikiData other) {
+  WikiData(final WikiData other) {
       doc = other.doc.clone();
       assert doc.hasSameValue(other.doc);
   }
-  
+
   /**
-   * Makes a minimal HTML wiki file
+   * Makes a minimal HTML wiki file.
    */
   private void makeMinimalWiki() {
-    final String document = 
-      "<!DOCTYPE html><html>" +
-      "  <head></head>" +
-      "  <body><new-cards-here></new-cards-here></body>" +
-      "</html>";
+    final String document =
+        "<!DOCTYPE html><html>"
+      + "  <head></head>"
+      + "  <body><new-cards-here></new-cards-here></body>"
+      + "</html>";
     doc = Jsoup.parse(document);
   }
-    
+
   /**
    * Loads the wiki file to work from.
    *
@@ -79,9 +68,8 @@ class WikiData extends CardsHolder {
    * @throws java.io.IOException if there is a problem loading from the reader.
    */
   @Override
-  void loadFrom(BufferedReader r)
-  throws java.io.IOException
-  {
+  void loadFrom(final BufferedReader r)
+  throws java.io.IOException {
     final var w = new StringWriter();
     r.transferTo(w);
     String input = w.toString();
@@ -100,33 +88,31 @@ class WikiData extends CardsHolder {
 
   /**
    * Save the HTML file to the specified destination.
-   * @param w the destination to save the HTML file to.
+   * @param file the destination to save the HTML file to.
    * @throws java.io.IOException if there is a problem writing to the Writer
-   */  
+   */
   @Override
-  void saveTo(File file) 
-  throws java.io.IOException
-  {
+  void saveTo(final File file)
+  throws java.io.IOException {
     assert doc != null;
     try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
         writer.write(doc.outerHtml());
     } catch (IOException e) {
-        throw new java.io.IOException("Trying to write HTML wiki file",e);
+        throw new java.io.IOException("Trying to write HTML wiki file", e);
     }
   }
 
-  
+
   /**
    * Updates a given card.
    * The old contents will be removed and new contents provided.
    * Only standard fields from the new card will be included.
-   * 
+   *
    * @param newCard The new card to update with
    * @param oldCard The wiki document "card" node
    *                to be updated.
    */
-  private void updateCardInDoc(final Card newCard, final Element oldCard)
-  {
+  private void updateCardInDoc(final Card newCard, final Element oldCard) {
     assert doc != null;
     if (newCard == null || oldCard == null) {
       throw new IllegalArgumentException("Arguments can't be null");
@@ -145,23 +131,26 @@ class WikiData extends CardsHolder {
   /**
    * Append the specified card field name and data
    * below the specified card DOM element, as the last child.
-   * 
+   *
    * @param fname The name of the field
    * @param fdata The data contained in the field
    * @param cardNd The card node in the DOM
    */
-  private void appendCardField(String fname, String fdata, Element cardNd) {
+  private void appendCardField(
+          final String fname,
+          final String fdata,
+          final Element cardNd) {
       if (fdata != null && !fdata.strip().isEmpty()
                         && !fname.equals("Statistics 1")) {
-        final var fieldNd = makeAndAppendElement("field",cardNd);
-        final var nameNd = makeAndAppendElement("name",fieldNd);
-        final var valueNd = makeAndAppendElement("value",fieldNd);
-        makeAndAppendText(fname,nameNd);
-        makeAndAppendText(" : ",fieldNd);
-        makeAndAppendText(fdata,valueNd);
+        final var fieldNd = makeAndAppendElement("field", cardNd);
+        final var nameNd = makeAndAppendElement("name", fieldNd);
+        final var valueNd = makeAndAppendElement("value", fieldNd);
+        makeAndAppendText(fname, nameNd);
+        makeAndAppendText(" : ", fieldNd);
+        makeAndAppendText(fdata, valueNd);
       }
   }
-  
+
   /**
    * Adds the specified card to the document, under the specified parent.
    * Places it as the last sibling.
@@ -173,20 +162,24 @@ class WikiData extends CardsHolder {
    * @param c      The card to place.
    * @param parent The parent to place the card under, as the last child.
    */
-  private void addCardToDoc(Card c, Element parent)
-  {
+  private void addCardToDoc(final Card c, final Element parent) {
     assert doc != null;
-    if (c == null)
+    if (c == null) {
       throw new IllegalArgumentException("Card can't be null");
-    if (parent == null)
+    }
+    if (parent == null) {
       throw new IllegalArgumentException("Parent can't be null");
-    if (c.getId() !=null && contains(c.getId()))
+    }
+    if (c.getId() != null && contains(c.getId())) {
       throw new IllegalArgumentException("Can't add id '"
-        + c.getId() 
+        + c.getId()
         + "' as it is already present.");
+    }
 
-    final var cardNd = makeAndAppendElement("card",parent);
-    if (c.getId() != null) cardNd.attr("id",c.getId().toString());
+    final var cardNd = makeAndAppendElement("card", parent);
+    if (c.getId() != null) {
+        cardNd.attr("id", c.getId().toString());
+    }
     updateCardInDoc(c, cardNd);
   }
 
@@ -198,7 +191,9 @@ class WikiData extends CardsHolder {
    * @param parent the element to use as the parent for the created element
    * @return the created Element
    */
-  private Element makeAndAppendElement(final String name, Element parent) {
+  private Element makeAndAppendElement(
+          final String name,
+          final Element parent) {
     final var element = doc.createElement(name);
     parent.appendChild(element);
     return element;
@@ -214,7 +209,7 @@ class WikiData extends CardsHolder {
     String[] lines = text.split(System.lineSeparator());
 
     parent.appendChild(new TextNode(lines[0]));
-    for (int i=1; i<lines.length; i++) {
+    for (int i = 1; i < lines.length; i++) {
       parent.appendChild(new Element("br"));
       parent.appendChild(new TextNode(lines[i]));
     }
@@ -222,58 +217,62 @@ class WikiData extends CardsHolder {
 
   // see superclass for javadoc
   @Override
-  void updateCard(Card c)
-  {
+  void updateCard(final Card c) {
     assert doc != null;
-    if (c == null) return;
+    if (c == null) {
+        return;
+    }
 
     final Integer id = c.getId();
-    if (id == null ) 
+    if (id == null) {
       throw new IllegalArgumentException("Can't update from an unIDed card.");
-    if( !contains(id)) {
+    }
+    if (!contains(id)) {
       String msg =
-        String.format("Can't update id '%d' as it is not present.",id);
+        String.format("Can't update id '%d' as it is not present.", id);
       throw new IllegalArgumentException(msg);
     }
 
     Element toUpdate = doc.getElementById(id.toString());
-    updateCardInDoc(c,toUpdate);
+    updateCardInDoc(c, toUpdate);
   }
- 
+
   /**
-   * Creates a Card from the card at the specified Element in the DOM
-   * 
+   * Creates a Card from the card at the specified Element in the DOM.
+   *
    * @param cardNode the DOM card node from which to create the Card
    * @return the created Card
    */
-  private Card asCard(Element cardNode) {
-    if (cardNode == null) return null;
+  private Card asCard(final Element cardNode) {
+    if (cardNode == null) {
+        return null;
+    }
 
     Integer id = null;
     if (!cardNode.attr("id").equals("")) {
         id = Integer.valueOf(cardNode.attr("id"));
     }
     Elements fields = cardNode.select("field");
-    final var fieldMap = new HashMap<String,String>();
+    final var fieldMap = new HashMap<String, String>();
     for (Element f : fields) {
       String name = null;
       String value = null;
       try {
         name = f.select("name").first().html();
         value = f.select("value").first().html();
-      } catch ( NullPointerException e ) { // turn into a clearer exception
+      } catch (NullPointerException e) { // turn into a clearer exception
         throw new IllegalStateException(e);
       }
-      fieldMap.put(name,value);
+      fieldMap.put(name, value);
     }
-    return new Card(fieldMap,id);      
+    return new Card(fieldMap, id);
   }
-  
+
   // see superclass for javadoc
   @Override
   Card getCard(final Integer id) {
     assert doc != null;
-    Objects.requireNonNull(id,"id must not be null");
+    Objects.requireNonNull(id, "id must not be null");
 
     final Element cardNode = doc.getElementById(String.valueOf(id));
     return asCard(cardNode);
@@ -290,16 +289,17 @@ class WikiData extends CardsHolder {
    * @param c The card to add
    */
   @Override
-  void addCard(final Card c)
-  {
+  void addCard(final Card c) {
     assert doc != null;
-    
-    if (c == null) return;
+
+    if (c == null) {
+        return;
+    }
 
     final Integer id = c.getId();
     if (id != null && contains(id)) {
       String msg =
-        String.format("Can't add id '%d' as it is already present.",id);
+        String.format("Can't add id '%d' as it is already present.", id);
       throw new IllegalArgumentException(msg);
     }
 
@@ -309,20 +309,19 @@ class WikiData extends CardsHolder {
     } else if (nodes.size() > 1) {
       throw new IllegalStateException("More than one new-card-here element");
     }
-    
+
     addCardToDoc(c, nodes.get(0));
   }
 
   // see superclass for javadoc
   @Override
-  ArrayList<Integer> getIds()
-  {
+  ArrayList<Integer> getIds() {
     assert doc != null;
 
-    final Function<Element,Integer> idFromCardElement =
+    final Function<Element, Integer> idFromCardElement =
       e -> e.attr("id").equals("") ? null : Integer.valueOf(e.attr("id"));
 
-    return new ArrayList<Integer> (
+    return new ArrayList<Integer>(
                  doc.select("card").stream()
                                    .map(idFromCardElement)
                                    .collect(Collectors.toList()));
@@ -330,10 +329,9 @@ class WikiData extends CardsHolder {
 
   // see superclass for javadoc
   @Override
-  void zapIds()
-  {
+  void zapIds() {
     assert doc != null;
-    doc.select("card").attr("id",null);
+    doc.select("card").attr("id", null);
   }
 
   // see superclass for javadoc
@@ -351,16 +349,16 @@ class WikiData extends CardsHolder {
                 return Integer.valueOf(element.attr("id"));
             } catch (NumberFormatException nfe) {
                 throw new RuntimeException(
-                        "Illegal card id '"+element.attr("id")+"'", nfe);
+                        "Illegal card id '" + element.attr("id") + "'", nfe);
             }
         };
-    
+
     final OptionalInt oldMax = doc.select("card[id]")
                                   .stream()
                                   .mapToInt(idAsInt)
                                   .max();
 
-    int nextId = oldMax.isPresent() ? oldMax.getAsInt() + 1 
+    int nextId = oldMax.isPresent() ? oldMax.getAsInt() + 1
                                     : Integer.MIN_VALUE;
 
     //
@@ -389,26 +387,28 @@ class WikiData extends CardsHolder {
     if (cardElements.isEmpty()) {
       return new ArrayList<>();
     }
-    return cardElements.stream().map(e -> asCard(e)).collect(Collectors.toList());    
+    return cardElements.stream()
+                       .map(e -> asCard(e))
+                       .collect(Collectors.toList());
   }
-  
-  private void deleteCard(Integer id) {
-      doc.select("card[id="+id+"]").remove();
+
+  private void deleteCard(final Integer id) {
+      doc.select("card[id=" + id + "]").remove();
   }
-  
+
   @Override
-  void deleteCards(List<Integer> ids) {
+  void deleteCards(final List<Integer> ids) {
         ids.forEach(i -> java.util.Objects.requireNonNull(i));
         ids.forEach(i -> deleteCard(i));
   }
-  
+
   /**
-   * Returns true if same class and same fields
+   * Returns true if same class and same fields.
    * @param o the object to test for equality
    * @return true if same class and same fields
    */
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(final Object o) {
       if (this == o) {
           return true;
       }
@@ -419,16 +419,17 @@ class WikiData extends CardsHolder {
       return doc.hasSameValue(cast.doc);
   }
 
-  @Override
   /**
    * Returns 0.
-   * 
-   * This isn't ideal, but underlying classes just use Object's implementation.
-   * If we ever really want a real hashCode,
-   * we could perhaps do doc.
-   * 
+   *
+   * This isn't ideal,
+   * but the underlying classes just use Object's implementation.
+   * We don't want that because then WikiData objects of equal value
+   * will be considered different when hashCode is checked first.
+   *
    * @return 0
    */
+  @Override
   public int hashCode() {
     return 0;
   }

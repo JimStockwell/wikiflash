@@ -16,12 +16,11 @@ import java.util.Objects;
  * neither having methods that change it,
  * nor having outside references to its potentially mutable innards.
  */
-class Card
-{
+class Card {
   /**
    * Card data, as a map from field to field content.
    */
-  private final Map<String,String> dataByField;
+  private final Map<String, String> dataByField;
 
   /**
    * Card ID.  Null means no ID assigned yet.
@@ -35,7 +34,7 @@ class Card
    * @param dataByField the fields and data
    * @param id          the id
    */
-  Card( Map<String,String> dataByField, Integer id ) {
+  Card(final Map<String, String> dataByField, final Integer id) {
     assert dataByField != null;
     this.dataByField = new HashMap<>(dataByField);
     this.id = id;
@@ -46,15 +45,15 @@ class Card
    *
    * @param c the card to construct this card from
    */
-  Card(Card c) {
-    this(c.getData(),c.getId());
+  Card(final Card c) {
+    this(c.getData(), c.getId());
   }
 
   /**
    * Returns a new Map from field name to field contents.
    * @return the Map
-   */ 
-  Map<String,String> getData() {
+   */
+  Map<String, String> getData() {
     return new HashMap<>(dataByField);
   }
 
@@ -63,7 +62,9 @@ class Card
    * If the card does not have an ID, returns null.
    * @return the card's ID.
    */
-  Integer getId()         { return id; }
+  Integer getId() {
+      return id;
+  }
 
   /**
    * Gets a printable string.
@@ -72,24 +73,8 @@ class Card
    *
    * @return a String representation of the ID.  Will not return null.
    */
-  String getIdString()    { return id != null ? id.toString() : "<NULL>"; }
-
-  /**
-   * Like classic equals,
-   * but ignores differences in subclasses
-   * @param o the object to test for equality (as a Card)
-   * @return true if the two objects contain the same data from the point
-   *         of view of a Card superclass.
-   */
-  public boolean equalsAsCard(Card o) { // TODO: can we replace this with a cast?
-      if (this == o) {
-          return true;
-      }
-      if (o == null) {
-          return false;
-      }
-      boolean idsSame = Objects.equals(id, o.getId());
-      return idsSame && dataByField.equals(o.getData());
+  String getIdString() {
+       return id != null ? id.toString() : "<NULL>";
   }
 
   /**
@@ -102,20 +87,25 @@ class Card
       if (o == null || getClass() != o.getClass()) {
           return false;
       }
-      return equalsAsCard((Card) o);
+      if (this == o) {
+          return true;
+      }
+      Card c = (Card) o;
+      boolean idsSame = Objects.equals(id, c.getId()); // null is legitimate
+      return idsSame && dataByField.equals(c.getData());
   }
 
   @Override
   public int hashCode() {
     return Objects.hash(dataByField, id);
   }
-  
+
   /**
    * The standard field names.
    */
   static final String[] FIELD_NAMES_OF_INTEREST = new String[] {
       "Text 1", "Text 2", "Text 3", "Text 4", "Text 5",
-      "Picture 1", "Picture 2","Picture 3","Picture 4","Picture 5",
-      "Sound 1","Sound 2", "Category 1", "Statistics 1",
+      "Picture 1", "Picture 2", "Picture 3", "Picture 4", "Picture 5",
+      "Sound 1", "Sound 2", "Category 1", "Statistics 1",
       "Notes", "Extra Info"};
 }

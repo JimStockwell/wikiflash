@@ -16,8 +16,8 @@ class SimpleCard extends Card {
    * @param text  The flash card text.
    * @param id    The card id.  A value of null means no ID.
    */
-  SimpleCard(String text, Integer id) {
-    super(cardFrom(text,id));
+  SimpleCard(final String text, final Integer id) {
+    super(cardFrom(text, id));
   }
 
   /**
@@ -30,14 +30,16 @@ class SimpleCard extends Card {
    * @param id    The card id.  A value of null means no ID.
    * @return the minimal Card
    */
-  private static Card cardFrom(String text, Integer id) {
-    if (text==null) throw new IllegalArgumentException("text cannot be null");
-    final var data = new HashMap<String,String>();
-    final String[] split = text.split(":");
-    for (int i=0; i<split.length; i++) {
-      data.put("Text "+(i+1),split[i]);
+  private static Card cardFrom(final String text, final Integer id) {
+    if (text == null) {
+        throw new IllegalArgumentException("text cannot be null");
     }
-    return new Card(data,id);
+    final var data = new HashMap<String, String>();
+    final String[] split = text.split(":");
+    for (int i = 0; i < split.length; i++) {
+      data.put("Text " + (i + 1), split[i]);
+    }
+    return new Card(data, id);
   }
 
   /**
@@ -50,7 +52,7 @@ class SimpleCard extends Card {
    *
    * @param text  The flash card text.
    */
-  SimpleCard(String text) {
+  SimpleCard(final String text) {
     this(text, null);
   }
 
@@ -63,7 +65,7 @@ class SimpleCard extends Card {
   public String toString() {
     final var fields = getData();
     final Integer id = getId();
-    final String result = 
+    final String result =
       fields + ((id == null) ? "" : System.lineSeparator() + id.toString());
     return result;
   }

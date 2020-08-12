@@ -8,22 +8,24 @@ import java.io.OutputStream;
 /**
  * Represents a Flashcards Deluxe export data file.
  */
-public class FDFileData extends FDCards
-{
+public class FDFileData extends FDCards {
   /**
-   * the file header
+   * The file header.
    */
   private Header header;
 
   /**
-   * the field names (they follow the header in the file)
+   * The field names (they follow the header in the file).
    */
   private FieldNames fieldNames;
 
+  /**
+   * Saves the CardsHolder to the indicated file, and closes the file.
+   * @param file the file to save the CardsHolder to
+   */
   @Override
-  void saveTo(File file) 
-  throws java.io.IOException
-  {
+  void saveTo(final File file)
+  throws java.io.IOException {
       var fw = new FileWriter(file);
       try (java.io.PrintWriter pw = new java.io.PrintWriter(fw)) {
           pw.print(header.toString());
@@ -31,18 +33,17 @@ public class FDFileData extends FDCards
           pw.print(super.toString());
       }
   }
-  
+
   /**
    * Loads the Flashcards Deluxe export data file into this instance.
    *
    * @param r the BufferedReader to read the datafile from
    */
   @Override
-  public void loadFrom(BufferedReader r)
-  {
+  public void loadFrom(final BufferedReader r) {
     header = new Header(r);
     fieldNames = new FieldNames(r);
-    super.loadFrom(r,fieldNames);
+    super.loadFrom(r, fieldNames);
   }
 
   /**
@@ -50,27 +51,11 @@ public class FDFileData extends FDCards
    *
    * @param outStream the stream to save the file card data to
    */
-  public void saveTo(OutputStream outStream)
-  {
+  public void saveTo(final OutputStream outStream) {
     var pw = new java.io.PrintWriter(outStream);
     pw.print(header.toString());
     pw.print(fieldNames.toString());
     pw.print(super.toString());
     pw.close();
   }
-
-//  /**
-//   * Returns a string representation of the data,
-//   * in a format suitable for saving as a Flashcards Deluxe data file.
-//   *
-//   * @return the Flashcards Deluxe compatible data file string
-//   */
-//  public String toString() {
-//    return new StringBuilder().
-//      append(header.toString()).
-//      append(fieldNames.toString()).
-//      append(super.toString()).
-//      toString();
-//  }
 }
-

@@ -3,20 +3,19 @@ package fdshow;
 import java.io.BufferedReader;
 
 /**
- * Represents the field names as provided by a Flashcards Deluxe data file
+ * Represents the field names as provided by a Flashcards Deluxe data file.
  */
-class FieldNames
-{
+class FieldNames {
   /**
-   * the list of field names
+   * Contains the field names.
    */
-  String[] data;
+  private String[] data;
 
   /**
    * Constructs a list of field names from the given array of field names.
    * @param names the names of the fields
    */
-  FieldNames(String[] names) {
+  FieldNames(final String[] names) {
       data = names.clone();
   }
   /**
@@ -25,13 +24,14 @@ class FieldNames
    *
    * @param r the specified BufferedReader
    */
-  FieldNames(BufferedReader r)
-  {
+  FieldNames(final BufferedReader r) {
     // readLine will deal with \n\r correctly,
     // regardless of local settings, per contract.
     try {
       data = r.readLine().split("\t");
-    } catch (java.io.IOException x) {throw new Error("Unexpected IOException");}
+    } catch (java.io.IOException x) {
+        throw new Error("Unexpected IOException", x);
+    }
   }
 
   /**
@@ -41,9 +41,8 @@ class FieldNames
    * @return the field list
    */
   @Override
-  public String toString()
-  {
-    var joiner = java.util.stream.Collectors.joining("\t","","\r\n");
+  public String toString() {
+    var joiner = java.util.stream.Collectors.joining("\t", "", "\r\n");
     var result = java.util.Arrays.stream(data).collect(joiner);
     return result;
   }
@@ -54,13 +53,15 @@ class FieldNames
    *
    * @return the length of the field list
    */
-  int length()
-  {
+  int length() {
     return data.length;
   }
-  
-  String[] toArray()
-  {
+
+  /**
+   * Returns the field names as an array.
+   * @return the array
+   */
+  String[] toArray() {
       return data.clone();
   }
 }
