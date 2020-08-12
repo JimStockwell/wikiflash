@@ -348,12 +348,13 @@ class WikiData extends CardsHolder {
     final ToIntFunction<Element> idAsInt =
         element -> {
             try {
-               return Integer.valueOf(element.attr("id"));
+                return Integer.valueOf(element.attr("id"));
             } catch (NumberFormatException nfe) {
                 throw new RuntimeException(
-                        "Illegal Card id '"+element.attr("id")+"'", nfe);
+                        "Illegal card id '"+element.attr("id")+"'", nfe);
             }
         };
+    
     final OptionalInt oldMax = doc.select("card[id]")
                                   .stream()
                                   .mapToInt(idAsInt)
@@ -374,6 +375,9 @@ class WikiData extends CardsHolder {
       it.next().attr("id", String.valueOf(nextId++));
     }
 
+    //
+    // return the IDs that have been added
+    //
     return collector;
   }
 

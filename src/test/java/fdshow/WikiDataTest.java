@@ -32,7 +32,7 @@ public class WikiDataTest
         
         // Check that it throws an Exception (due to id='abc')
         var e = assertThrows(
-            NumberFormatException.class,
+            RuntimeException.class,
             () -> wd.markBlankIds());
         assertEquals("Illegal card id 'abc'", e.getMessage());
     }
