@@ -60,8 +60,7 @@ public class CardTest
     final Card c1 = new Card(hm,1);
     assertFalse(c1.equals(null));
   }
-  
-    
+      
   @Test
   void should_notBeEqual_when_differentClasses() {
     final SimpleCard sc = new SimpleCard("A:B",3);
@@ -69,9 +68,9 @@ public class CardTest
   }
   
   @Test
-  void should_BeEqualAsCards_although_differentSubclasses() {
+  void should_BeEqualAsCards_when_madeIntoSameCardClass() {
     final SimpleCard sc = new SimpleCard("A:B",3);
-    assertTrue((new Card(sc)).equalsAsCard(sc));
+    assertEquals(new Card(sc),new Card(sc));
   }
 }
 

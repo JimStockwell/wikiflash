@@ -77,7 +77,9 @@ public class FDFileDataTest
                 new BufferedReader(
                         new StringReader(
                                 outStream.toString())));
-        assertTrue(fcData.getCards().get(0).equalsAsCard(fcData2.getCards().get(0)));        
+        assertEquals(
+                new Card(fcData.getCards().get(0)),
+                new Card(fcData2.getCards().get(0)));
     }
  
     @Test
@@ -90,8 +92,11 @@ public class FDFileDataTest
 
         FDFileData fcData1 = new FDFileData();
         fcData1.loadFrom(new BufferedReader( new FileReader( fcFile ) ) );
-        var newIds = fcData1.markBlankIds();
         
+        //
+        // Write fdData1 out, and read it back in as fdData2
+        //
+        var newIds = fcData1.markBlankIds();        
         var outStream = new java.io.ByteArrayOutputStream();
         fcData1.saveTo(outStream);
         FDFileData fcData2 = new FDFileData();
@@ -99,10 +104,12 @@ public class FDFileDataTest
                 new BufferedReader(
                         new StringReader(
                                 outStream.toString())));
-        final Card c1 = fcData1.getCards().get(0);
-        final Card c2 = fcData2.getCards().get(0);
-        final boolean areEqual = c1.equalsAsCard(c2);
-        assertTrue(areEqual);
+        //
+        // Should not have changed!
+        //
+        final Card c1 = new Card(fcData1.getCards().get(0));
+        final Card c2 = new Card(fcData2.getCards().get(0));
+        assertEquals(c1,c2);
     }
     
     @Test
