@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.nio.file.Files;
 import java.io.BufferedReader;
-import java.io.OutputStream;
 import java.io.FileReader;
 import java.io.FileOutputStream;
 import java.io.StringReader;
@@ -93,10 +92,7 @@ public class FDFileDataTest
         FDFileData fcData1 = new FDFileData();
         fcData1.loadFrom(new BufferedReader( new FileReader( fcFile ) ) );
         
-        //
-        // Write fdData1 out, and read it back in as fdData2
-        //
-        var newIds = fcData1.markBlankIds();        
+        fcData1.markBlankIds();        
         var outStream = new java.io.ByteArrayOutputStream();
         fcData1.saveTo(outStream);
         FDFileData fcData2 = new FDFileData();

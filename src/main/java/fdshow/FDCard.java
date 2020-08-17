@@ -6,10 +6,6 @@ package fdshow;
  */
 
 import java.io.Reader;
-import java.io.BufferedReader;
-import java.io.OutputStream;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -37,6 +33,7 @@ class FDCard extends Card
     super(readCard(r,fields));
     fieldNames = fields;
   }
+  
   /**
    * Constructs a Card from the specified field content, card ID, and field names.
    * The field names in <code>datByFields</code> and <code>fields</code>
@@ -72,8 +69,9 @@ class FDCard extends Card
   private static Card readCard(Reader r, FieldNames fields) {
     final var cardData = new HashMap<String,String>();
     Integer id = null;
+    final var fieldsData = fields.toArray();
     for(int i=0; i<fields.length(); i++) {
-      cardData.put(fields.data[i],nextField(r));
+      cardData.put(fieldsData[i],nextField(r));
     }
     final String notes = cardData.get("Notes");
     if (encodesId(notes)) {
@@ -118,7 +116,10 @@ class FDCard extends Card
           accum.append((char)ch);
           ch = r.read();
         }
-        // a first quote was read, then a non-quote.
+        // we have reached the end of the quoted field.
+        // So now we either have a delimiter in ch,
+        // or the first half of one in ch,
+        // or -1 for "end of file" in ch.
         assert ch=='\t' || ch=='\r' || ch==-1 : "Error in flashcard file";
         if( ch == '\r' ) {
           ch = r.read();
@@ -213,13 +214,14 @@ class FDCard extends Card
           );
       }
 
-      if (fieldNames.data[i].equals("Notes") && getId() != null) {
+    final String[] fieldNamesData = fieldNames.toArray();
+	if (fieldNamesData[i].equals("Notes") && getId() != null) {
         sb.append(
           canonicalField(
             getId().toString() + " : DO NOT MODIFY THIS LINE " +
-            content.get(fieldNames.data[i])));
+            content.get(fieldNamesData[i])));
       } else {
-        sb.append(canonicalField(content.get(fieldNames.data[i])));
+        sb.append(canonicalField(content.get(fieldNamesData[i])));
       }
       if (i < fieldNames.length()-1) sb.append("\t");
     }

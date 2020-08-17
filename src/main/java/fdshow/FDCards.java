@@ -207,18 +207,6 @@ class FDCards extends CardsHolder
     }
   }
 
-//  /**
-//   * Determines the next ID to assign a null IDed Card.
-//   * @return the next ID to assign
-//   */
-//  private int getNextId() {
-//    OptionalInt maxFound = data.stream()
-//                               .filter(c -> c.getId() != null)
-//                               .mapToInt(c -> c.getId())
-//                               .max();
-//    return maxFound.isEmpty() ? Integer.MIN_VALUE : maxFound.getAsInt();
-//  }
-
   /**
    * Sets the Cards with null ID to have an ID.
    * The ID starts at the specified ID and proceeds numerically upward.

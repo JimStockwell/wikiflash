@@ -39,6 +39,30 @@ public class FDCardTest extends FDFileData
         final FDCard cCopy = new FDCard(cRead, fields);
         assertEquals(cRead, cCopy);        
     }
+
+    @Test
+    public void should_respectEscapedQuotes_when_readingQuotedText()
+    throws Exception
+    {
+        final var fields = new FieldNames(new String[] {"f1","f2"});
+        //
+        // we are loading into f2 a quoted string containing b""
+        // and the two double quotes are an escape sequence representing
+        // one double quote.  So --> b"
+        //
+        final FDCard card = new FDCard(new StringReader("a\t\"b\"\"\""),fields);
+        assertEquals("b\"",card.getData().get("f2"));	
+     }    
+    
+
+    @Test
+    public void should_replaceCRLFwithLF_when_readingQuotedText()
+    throws Exception
+    {
+        final var fields = new FieldNames(new String[] {"f1","f2"});
+        final FDCard card = new FDCard(new StringReader("a\t\"b\r\n\""),fields);
+        assertEquals("b" + System.lineSeparator(),card.getData().get("f2"));	
+    }
     
     @Test
     public void writeAndReadShouldNotChangeData()
@@ -77,7 +101,7 @@ public class FDCardTest extends FDFileData
     }
   
     @Test
-    public void shouldUseSystemStandardLineBreaks()
+    public void should_useSystemStandardLineBreaks()
     throws java.io.FileNotFoundException
     {
         String baseName = FDData.NAME;

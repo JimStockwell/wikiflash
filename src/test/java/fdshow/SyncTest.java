@@ -48,8 +48,6 @@ public class SyncTest
         // Sync flashcards to wiki...
         Sync.deleteExtraCards(flashCards,wiki);
         
-        // and confirm wiki is unchanged
-        boolean isEqual = expected.equals(wiki);
         assertEquals(expected, wiki);
     }    
 
