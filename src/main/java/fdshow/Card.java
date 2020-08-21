@@ -12,9 +12,10 @@ import java.util.Objects;
 /**
  * Contains the fields and optional ID of the flashcard/wiki Card.
  *
- * Note also that Card is immutable,
+ * Notice that Card is immutable,
  * neither having methods that change it,
  * nor having outside references to its potentially mutable innards.
+ * 
  */
 class Card {
   /**

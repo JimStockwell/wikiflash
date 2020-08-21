@@ -86,7 +86,7 @@ class FDCard extends Card
    * Returns the next field.
    *
    * Between calls, the Reader points at the start of a field,
-   * just after any preceeding delimiters.
+   * just after any preceding delimiters.
    *
    * Control characters that are part of the persistent storage control,
    * for example quotes at the end of a multiline field, are not included.
@@ -106,39 +106,69 @@ class FDCard extends Card
   private static String nextField(Reader r)
   {
     try {
-      var accum = new StringBuilder();
       int ch = r.read();
       boolean quotedText = ch=='"';
       if(quotedText) {
-        ch = r.read(); // get rid of the leading quote
-        while( ch!='"' || (ch=r.read())=='"' ) {
-          // ch is either a regular character, or the second of two quotes.
-          accum.append((char)ch);
-          ch = r.read();
-        }
-        // we have reached the end of the quoted field.
-        // So now we either have a delimiter in ch,
-        // or the first half of one in ch,
-        // or -1 for "end of file" in ch.
-        assert ch=='\t' || ch=='\r' || ch==-1 : "Error in flashcard file";
-        if( ch == '\r' ) {
-          ch = r.read();
-          assert ch=='\n' : "Return not followed by linefeed in flashcard file";
-        }
-        return accum.toString().replaceAll("\r\n",System.lineSeparator());
+	  	return getRestOfQuotedString(r);
       } else {
-        while( ch != '\t' && ch != '\r' && ch != -1 ) {
-          accum.append((char)ch);
-          ch = r.read();
-        }
-        if( ch=='\r' ) {
-          r.read(); // soak up \n
-        }
-        return accum.toString();
+    	return getRegularString(ch, r);
       }
     } catch (java.io.IOException x) {
       throw new Error("Unexpected IOException");
     }
+  }
+
+  static private String getRegularString(int FirstCharacter, Reader r)
+  throws java.io.IOException {
+	  int ch = FirstCharacter;
+      var accum = new StringBuilder();
+      while( ch != '\t' && ch != '\r' && ch != -1 ) {
+        accum.append((char)ch);
+        ch = r.read();
+      }
+      if( ch=='\r' ) {
+        r.read(); // soak up \n
+      }
+      return accum.toString();	  
+  }
+  /**
+   * Reads in a quoted FD sting and returns it.
+   * Assumes the leading quote has already been read and discarded.
+   * 
+   * Converts from Flashcards Deluxe multi-line format to
+   * a more standard internal Java representation.
+   * That is, replaces "" with " and \r\n with System.lineSeparator().
+   * 
+   * @param r The Reader that is providing the quoted string
+   * @return The string data
+   * @throws java.io.IOException
+   */
+  static private String getRestOfQuotedString(Reader r)
+  throws java.io.IOException {
+      var accum = new StringBuilder();
+      //
+      // at this point, r is at the character after the introductory quote,
+      // poised to read the first non-delimiter character.
+      //
+      int ch = r.read();
+      while( ch!='"' || (ch=r.read())=='"' ) {
+        // ch is either a regular character, or the second of two quotes.
+        accum.append((char)ch);
+        ch = r.read();
+      }
+      //
+      // we have reached the end of the quoted field.
+      // So now we either have a delimiter in ch,
+      // or the first half of one in ch,
+      // or -1 for "end of file" in ch.
+      //
+      assert ch=='\t' || ch=='\r' || ch==-1 : "Error in flashcard file";
+      if( ch == '\r' ) {
+        ch = r.read();
+        assert ch=='\n' : "Return not followed by linefeed in flashcard file";
+      }
+      
+      return accum.toString().replaceAll("\r\n",System.lineSeparator());	  
   }
   
   /**
